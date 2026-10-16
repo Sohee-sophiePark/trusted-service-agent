@@ -2,12 +2,12 @@
 
 import json
 import uuid
+from pathlib import Path
 
-import yaml
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 
-from trusted_service_agent import agent, control, identity, metrics
+from trusted_service_agent import agent, control, identity, metrics, telemetry
 from trusted_service_agent.config import settings
 from trusted_service_agent.identity import Session
 from trusted_service_agent.llm.gateway import Gateway
@@ -78,16 +78,32 @@ def get_control() -> dict:
 @app.put("/api/control")
 def put_control(body: ControlIn) -> dict:
     cfg = control.load() | body.model_dump()
-    control.CONTROL_FILE.write_text(yaml.safe_dump(cfg, sort_keys=False))
+    control.save(cfg)
     return cfg
 
 
 @app.get("/api/dashboard")
 def dashboard() -> dict:
+    """Operator console data: simulated performance history, eval release check, today's tiles."""
     report = ROOT / "eval" / "report.json"
     return {
         "ops": json.loads((DATA / "ops" / "simulated_ops.json").read_text()),
-        "baseline": wh.rows("SELECT * FROM servicing.contact_baseline ORDER BY share DESC", []),
         "eval": json.loads(report.read_text()) if report.exists() else None,
         "today": metrics.today(),
     }
+
+
+def _tail(path: Path, n: int) -> list[dict]:
+    return [json.loads(x) for x in path.read_text().splitlines()[-n:]] if path.exists() else []
+
+
+@app.get("/api/queue")
+def queue() -> list[dict]:
+    """Handoff cards for human agents, newest first."""
+    return _tail(telemetry.SINK.with_name("queue.jsonl"), 50)[::-1]
+
+
+@app.get("/api/recent")
+def recent() -> list[dict]:
+    """Latest turn outcomes (no customer text), newest first."""
+    return _tail(telemetry.SINK, 50)[::-1]

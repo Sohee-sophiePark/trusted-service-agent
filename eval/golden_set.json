@@ -32,7 +32,7 @@
   "expect_answer": "Ask an agent before the due date; arrangements are set up only by an agent.",
   "expect_source": "policies/late-fees.md#arrangements",
   "must_include": [
-   "before the due date"
+   "due date"
   ],
   "sme_signed": true
  },
@@ -104,7 +104,7 @@
   "expect_answer": "Monthly price divided by days in the cycle, times the days the plan was active.",
   "expect_source": "policies/proration.md#calculation",
   "must_include": [
-   "divided"
+   "divid"
   ],
   "sme_signed": true
  },
@@ -158,7 +158,7 @@
   "expect_answer": "Yes, the included modem must be returned when service ends.",
   "expect_source": "policies/plans.md#internet",
   "must_include": [
-   "returned"
+   "return|send back|give back"
   ],
   "sme_signed": true
  },

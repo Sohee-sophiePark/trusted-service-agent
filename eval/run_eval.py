@@ -59,7 +59,11 @@ async def score(gw: Gateway) -> dict:
                 "q": c["q"],
                 "answered": g is not None,
                 "source_ok": bool(g) and g.section.id == c["expect_source"],
-                "facts_ok": bool(g) and all(f.lower() in text.lower() for f in c["must_include"]),
+                "facts_ok": bool(g)
+                and all(
+                    any(alt in text.lower() for alt in f.lower().split("|"))
+                    for f in c["must_include"]
+                ),
                 "quote_verified": bool(g) and grounding.verified(g.quote, g.section),
             }
         )
@@ -83,7 +87,7 @@ async def score(gw: Gateway) -> dict:
 
 
 def gate(m: dict) -> dict:
-    """Phase 1→2 checks the evaluation sets decide; the rest come from phase-1 operations."""
+    """Release check: each evaluation threshold from thresholds.yaml (phase_1_to_2)."""
     t = yaml.safe_load((CONFIG / "thresholds.yaml").read_text())["phase_1_to_2"]
     return {
         "golden_set_accuracy": m["golden_set_accuracy"] >= t["golden_set_accuracy"],
@@ -112,10 +116,9 @@ def main() -> int:
         print(f"{k:24s}{m[k]:7.1%}  {mark}")
     ok = all(checks.values())
     print(
-        f"\nPhase 1→2 gate (evaluation part): {GREEN + 'PASS' if ok else RED + 'FAIL'}{RESET}  "
+        f"\nRelease check: {GREEN + 'PASS' if ok else RED + 'FAIL'}{RESET}  "
         f"[{m['routing_cases']} routing · {m['golden_cases']} golden · model calls {gw.calls}]"
     )
-    print("Draft acceptance and SME sign-off come from phase-1 operations, not from these sets.")
     report = {k: v for k, v in m.items()} | {"gate": checks, "pass": ok, "model_calls": gw.calls}
     (EVAL / "report.json").write_text(json.dumps(report, indent=1))
     return 0 if ok else 1

@@ -48,6 +48,10 @@ async def turn(
     start = gw.calls
     result = await _turn(contact_id, text, session, wh, gw, control_file)
     result.model_calls = gw.calls - start
+    if result.card:
+        telemetry.emit(
+            sink.with_name("queue.jsonl"), contact_id=contact_id, **result.card.model_dump()
+        )
     telemetry.emit(
         sink,
         contact_id=contact_id,

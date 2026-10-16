@@ -36,7 +36,10 @@ class Gateway:
             )
             try:
                 self.calls += self.settings.run_mode != "replay"
-                resp = await self.limiter.call(model, lambda _n, r=req: self.client.generate(r))
+                if self.settings.run_mode == "replay":
+                    resp = await self.client.generate(req)  # no network, no rate limit
+                else:
+                    resp = await self.limiter.call(model, lambda _n, r=req: self.client.generate(r))
                 self.calls += self.settings.run_mode == "replay"
                 return schema.model_validate(resp.parsed)
             except CassetteMiss:

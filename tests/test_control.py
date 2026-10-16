@@ -48,3 +48,11 @@ def test_config_is_reread_every_call(tmp_path):
     assert control.admit("same", p).agent
     write(tmp_path, kill_switch=True)
     assert not control.admit("same", p).agent
+
+
+def test_save_keeps_the_explanations(tmp_path):
+    p = write(tmp_path, kill_switch=True, traffic_share=0.05)
+    control.save(control.load(p), p)
+    text = p.read_text()
+    assert "# Three layers of rollback" in text and "layer 3" in text
+    assert control.load(p)["kill_switch"] is True and control.load(p)["traffic_share"] == 0.05

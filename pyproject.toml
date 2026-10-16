@@ -41,6 +41,8 @@ select = ["E", "F", "I", "UP", "B", "W"]
 # SQL statements kept on one line each (structured blocks)
 "src/trusted_service_agent/actions.py" = ["E501"]
 "src/trusted_service_agent/identity.py" = ["E501"]
+# control.yaml template written line by line (structured block)
+"src/trusted_service_agent/control.py" = ["E501"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["trusted_service_agent"]
