@@ -1,0 +1,212 @@
+[
+ {
+  "id": "TR-001",
+  "contact_reason": "billing",
+  "channel": "voice",
+  "text": "Hi, my bill is way higher this month and I didn't change anything. Can you tell me why?",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-002",
+  "contact_reason": "billing",
+  "channel": "chat",
+  "text": "When is my payment due? I can't find it on the app.",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-003",
+  "contact_reason": "billing",
+  "channel": "voice",
+  "text": "I paid through my bank on Friday, has it come through yet?",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-004",
+  "contact_reason": "billing",
+  "channel": "chat",
+  "text": "What's my balance right now?",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-005",
+  "contact_reason": "billing",
+  "channel": "voice",
+  "text": "Why is there a partial charge for 11 days on my bill?",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-006",
+  "contact_reason": "billing",
+  "channel": "chat",
+  "text": "How much was my last bill?",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-007",
+  "contact_reason": "ticket",
+  "channel": "voice",
+  "text": "The technician was supposed to come between 8 and 12, nobody showed. Where is he?",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-008",
+  "contact_reason": "ticket",
+  "channel": "chat",
+  "text": "What's the status of my installation ticket?",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-009",
+  "contact_reason": "ticket",
+  "channel": "voice",
+  "text": "My repair ticket says on hold, what does that mean?",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-010",
+  "contact_reason": "ticket",
+  "channel": "chat",
+  "text": "Is my repair still scheduled for tomorrow?",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-011",
+  "contact_reason": "outage",
+  "channel": "voice",
+  "text": "Internet has been down since this morning, is there an outage in my area?",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-012",
+  "contact_reason": "outage",
+  "channel": "chat",
+  "text": "Is there a network outage right now? My phone has no signal.",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-013",
+  "contact_reason": "outage",
+  "channel": "voice",
+  "text": "We were without internet for two days last week, do we get anything back?",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-014",
+  "contact_reason": "tech",
+  "channel": "voice",
+  "text": "My wifi keeps dropping every evening, I've restarted the modem twice.",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-015",
+  "contact_reason": "tech",
+  "channel": "chat",
+  "text": "How do I set up voicemail on my new phone?",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-016",
+  "contact_reason": "plan",
+  "channel": "chat",
+  "text": "What happens when I use all my data on the Plus plan?",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-017",
+  "contact_reason": "plan",
+  "channel": "voice",
+  "text": "How much is roaming in the States?",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-018",
+  "contact_reason": "plan",
+  "channel": "chat",
+  "text": "Is there a discount if I have internet and mobile with you?",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-019",
+  "contact_reason": "plan",
+  "channel": "voice",
+  "text": "Do I get charged if I use wifi calling abroad?",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-020",
+  "contact_reason": "plan",
+  "channel": "chat",
+  "text": "Which plan should I get, I mostly stream video?",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-021",
+  "contact_reason": "change",
+  "channel": "voice",
+  "text": "I want to cancel my internet, I'm moving in with my partner.",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-022",
+  "contact_reason": "change",
+  "channel": "chat",
+  "text": "Can you change my plan to Unlimited starting today?",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-023",
+  "contact_reason": "change",
+  "channel": "voice",
+  "text": "I need to update my address for the bill.",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-024",
+  "contact_reason": "dispute",
+  "channel": "voice",
+  "text": "There's a charge for a device I never ordered, I want it removed.",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-025",
+  "contact_reason": "dispute",
+  "channel": "chat",
+  "text": "I was overcharged for roaming, I wasn't even travelling that day.",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-026",
+  "contact_reason": "complaint",
+  "channel": "voice",
+  "text": "This is the third time I'm calling. I want to make a formal complaint.",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-027",
+  "contact_reason": "complaint",
+  "channel": "chat",
+  "text": "If this isn't fixed I'm going to the ombudsman.",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-028",
+  "contact_reason": "vulnerable",
+  "channel": "voice",
+  "text": "My husband passed away last month and the account is in his name. I don't know what to do.",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-029",
+  "contact_reason": "vulnerable",
+  "channel": "voice",
+  "text": "I lost my job and I can't afford this month's bill.",
+  "pii": "redacted"
+ },
+ {
+  "id": "TR-030",
+  "contact_reason": "vulnerable",
+  "channel": "chat",
+  "text": "I'm really confused, my son set this up and I don't understand any of the charges.",
+  "pii": "redacted"
+ }
+]

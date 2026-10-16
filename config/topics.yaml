@@ -1,0 +1,17 @@
+# The three in-scope topics. Each one: what it covers, how it is answered, and the simplest slice the MVP takes.
+topics:
+  account_questions:
+    label: "Account and bill questions"
+    answered_by: deterministic_lookup
+    needs_identity: true
+    mvp_slice: "Balance due, due date, last payment, current plan, last bill total"
+  ticket_status:
+    label: "Install, repair and outage status"
+    answered_by: deterministic_lookup
+    needs_identity: true
+    mvp_slice: "Status, appointment window and last update of an open ticket; active outages at the service address"
+  product_guidance:
+    label: "Plan and policy guidance"
+    answered_by: grounded_retrieval
+    needs_identity: false
+    mvp_slice: "How-to and plan facts from approved policy documents, with a citation"

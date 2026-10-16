@@ -1,0 +1,273 @@
+[
+ {
+  "q": "how much is the late payment fee",
+  "expect_answer": "2% of the overdue balance, minimum $5, maximum $25 per bill.",
+  "expect_source": "policies/late-fees.md#amount",
+  "must_include": [
+   "2%",
+   "$25"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "when does a late payment charge apply",
+  "expect_answer": "When the full balance is not received by the due date.",
+  "expect_source": "policies/late-fees.md#when",
+  "must_include": [
+   "due date"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "is there a grace period for late payments",
+  "expect_answer": "No late charge if payment arrives within two business days after the due date.",
+  "expect_source": "policies/late-fees.md#grace",
+  "must_include": [
+   "two business days"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "can I set up a payment arrangement",
+  "expect_answer": "Ask an agent before the due date; arrangements are set up only by an agent.",
+  "expect_source": "policies/late-fees.md#arrangements",
+  "must_include": [
+   "before the due date"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "when is my bill payment due",
+  "expect_answer": "21 days after the bill is issued.",
+  "expect_source": "policies/billing.md#due-date",
+  "must_include": [
+   "21 days"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "how can I pay my bill",
+  "expect_answer": "Pre-authorized debit, credit card, online banking, or in a Tessaline store.",
+  "expect_source": "policies/billing.md#methods",
+  "must_include": [
+   "online banking"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "how long does an online banking payment take",
+  "expect_answer": "Up to three business days.",
+  "expect_source": "policies/billing.md#methods",
+  "must_include": [
+   "three business days"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "can I get a paper bill",
+  "expect_answer": "Free for customers 65+ or on a disability benefit; otherwise $2 per month.",
+  "expect_source": "policies/billing.md#paper",
+  "must_include": [
+   "$2"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "when does my bill cycle start",
+  "expect_answer": "The same day every month; the bill covers the next month in advance.",
+  "expect_source": "policies/billing.md#cycle",
+  "must_include": [
+   "same day"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "what is a prorated charge",
+  "expect_answer": "A partial charge or credit for the days each plan was active after a mid-cycle change.",
+  "expect_source": "policies/proration.md#meaning",
+  "must_include": [
+   "partial"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "why can the bill after a plan change be higher",
+  "expect_answer": "It can include the prorated charge plus the full monthly charge for the new cycle.",
+  "expect_source": "policies/proration.md#higher-bill",
+  "must_include": [
+   "full monthly charge"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "how is proration calculated",
+  "expect_answer": "Monthly price divided by days in the cycle, times the days the plan was active.",
+  "expect_source": "policies/proration.md#calculation",
+  "must_include": [
+   "divided"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "how much data does the Essential plan have",
+  "expect_answer": "20 GB for $45 per month.",
+  "expect_source": "policies/plans.md#mobile",
+  "must_include": [
+   "20 GB"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "how much is the Unlimited plan",
+  "expect_answer": "$80 per month with 150 GB at full speed.",
+  "expect_source": "policies/plans.md#mobile",
+  "must_include": [
+   "$80"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "what happens when I use all my data on Plus",
+  "expect_answer": "Speed is reduced to 512 kbps; there is no overage charge.",
+  "expect_source": "policies/plans.md#data-overage",
+  "must_include": [
+   "512 kbps"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "are there overage charges for data",
+  "expect_answer": "No overage charge; speed is reduced after the monthly amount.",
+  "expect_source": "policies/plans.md#data-overage",
+  "must_include": [
+   "no overage"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "how fast is home internet",
+  "expect_answer": "500 Mbps for $70 or 1 Gbps for $90 per month, unlimited usage.",
+  "expect_source": "policies/plans.md#internet",
+  "must_include": [
+   "1 Gbps"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "do I have to return the modem",
+  "expect_answer": "Yes, the included modem must be returned when service ends.",
+  "expect_source": "policies/plans.md#internet",
+  "must_include": [
+   "returned"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "is there a discount for mobile and internet together",
+  "expect_answer": "A $10 monthly discount on the home internet plan.",
+  "expect_source": "policies/plans.md#bundle",
+  "must_include": [
+   "$10"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "how much is roaming in the US",
+  "expect_answer": "Travel Pass is $12 per day in the United States.",
+  "expect_source": "policies/roaming.md#travel-pass",
+  "must_include": [
+   "$12"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "how much does Travel Pass cost in Europe",
+  "expect_answer": "$16 per day in countries other than the United States.",
+  "expect_source": "policies/roaming.md#travel-pass",
+  "must_include": [
+   "$16"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "is there a cap on Travel Pass charges",
+  "expect_answer": "Charges stop after 10 days in the same bill cycle.",
+  "expect_source": "policies/roaming.md#cap",
+  "must_include": [
+   "10 days"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "does wifi calling abroad trigger Travel Pass",
+  "expect_answer": "No, Wi-Fi calling and messaging do not trigger Travel Pass.",
+  "expect_source": "policies/roaming.md#off",
+  "must_include": [
+   "Wi-Fi"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "do I get a credit for an outage",
+  "expect_answer": "If service is unavailable more than 24 consecutive hours from a network outage.",
+  "expect_source": "policies/outage-credits.md#credit",
+  "must_include": [
+   "24"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "do I need to ask for an outage credit",
+  "expect_answer": "No, credits are applied automatically for confirmed network outages.",
+  "expect_source": "policies/outage-credits.md#how",
+  "must_include": [
+   "automatically"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "how often are outage estimates updated",
+  "expect_answer": "At least every two hours.",
+  "expect_source": "policies/outage-credits.md#updates",
+  "must_include": [
+   "two hours"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "what are the appointment windows",
+  "expect_answer": "8 am to 12 pm, 12 pm to 4 pm, or 4 pm to 8 pm.",
+  "expect_source": "policies/install-repair.md#windows",
+  "must_include": [
+   "4 pm"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "what does on hold mean for a ticket",
+  "expect_answer": "Parts or access are needed before work can continue.",
+  "expect_source": "policies/install-repair.md#statuses",
+  "must_include": [
+   "parts"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "how soon is a repair scheduled for a full outage",
+  "expect_answer": "Within two business days.",
+  "expect_source": "policies/install-repair.md#timing",
+  "must_include": [
+   "two business days"
+  ],
+  "sme_signed": true
+ },
+ {
+  "q": "what do I need to verify my identity",
+  "expect_answer": "The account number and the postal code of the service address.",
+  "expect_source": "policies/identity-verification.md#before",
+  "must_include": [
+   "postal code"
+  ],
+  "sme_signed": true
+ }
+]

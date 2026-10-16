@@ -1,0 +1,15 @@
+phase_1_to_2:               # agent-assist → controlled live
+  golden_set_accuracy: 0.90
+  groundedness: 0.95
+  routing_accuracy: 0.92
+  false_containment_rate: 0.02   # max
+  draft_acceptance_rate: 0.75
+  sme_signoff: required
+
+phase_2_to_3:               # controlled live → widen
+  verified_resolution_rate: 0.30
+  csat_vs_control: 0.00          # no worse than human
+  cost_per_resolved_contact_delta: -0.15
+  compliance_incidents: 0         # absolute
+  escalation_handle_time_delta: 0.00  # no worse
+  min_contacts_observed: 2000     # volume, not calendar

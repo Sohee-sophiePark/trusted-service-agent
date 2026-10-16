@@ -1,0 +1,34 @@
+# Risk draws the line. RMVP: regulatory, money, vulnerable, publicity.
+# Signals are checked by code before any model call; any hit hands off.
+out_of_scope:
+  - id: dispute
+    label: "Billing dispute or charge the customer did not make"
+    risk: [regulatory, money]
+    handoff_queue: disputes
+    signals: ["dispute", "didn't make", "did not make", "don't recognise", "don't recognize", "not my charge", "overcharged", "chargeback", "fraudulent charge", "refund for"]
+  - id: complaint
+    label: "Formal complaint"
+    risk: [regulatory, publicity]
+    handoff_queue: complaints
+    signals: ["complaint", "complain", "ombudsman", "ccts", "escalate this", "speak to a manager", "unacceptable", "going to the media"]
+  - id: account_change
+    label: "Any change to the account, plan, payment or service"
+    risk: [money]
+    handoff_queue: servicing
+    signals: ["cancel", "change my plan", "switch my plan", "upgrade", "downgrade", "update my address", "change my address", "change my payment", "add a line", "remove a line", "port my number", "waive", "credit my account"]
+  - id: vulnerable
+    label: "Bereavement, hardship, distress or confusion"
+    risk: [vulnerable, publicity]
+    handoff_queue: specialist
+    detection_note: "Err toward handoff. False containment here is the worst failure."
+    signals: ["passed away", "died", "death", "funeral", "bereave", "widow", "lost my job", "can't afford", "cannot afford", "hardship", "struggling to pay", "behind on", "scared", "desperate", "don't understand anything", "confused", "hospital", "elderly", "my mother", "my father"]
+  - id: advice
+    label: "Plan-suitability or financial advice"
+    risk: [regulatory]
+    handoff_queue: advice
+    signals: ["which plan should i", "what plan should i", "is it worth", "should i switch", "should i sign", "recommend a plan", "best plan for me"]
+  - id: unsafe_input
+    label: "Instructions aimed at the agent instead of a service request"
+    risk: [publicity]
+    handoff_queue: servicing
+    signals: ["ignore previous", "ignore all previous", "ignore your instructions", "system prompt", "you are now", "developer mode", "reveal your", "act as"]

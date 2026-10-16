@@ -1,0 +1,8 @@
+# Three layers of rollback. Read before every single turn.
+kill_switch: false          # layer 3 — everything to humans, no model call
+traffic_share: 0.10         # layer 2 — fraction of contacts the agent handles
+topics:                     # layer 1 — narrow the scope
+  account_questions: true
+  ticket_status: true
+  product_guidance: true
+auto_pause_on_compliance_incident: true

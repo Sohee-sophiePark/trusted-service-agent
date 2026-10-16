@@ -1,0 +1,51 @@
+[project]
+name = "trusted-service-agent"
+version = "0.1.0"
+description = "Customer-servicing agent with a control plane, never-do routing, cited answers and phase gates. Fictional data, demo only."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.30",
+  "pydantic>=2.7",
+  "pyyaml>=6.0",
+  "duckdb>=1.1",
+  "rank-bm25>=0.2.2",
+  "google-genai>=1.0",
+]
+
+[project.scripts]
+tsa = "trusted_service_agent.cli:main"
+
+[dependency-groups]
+dev = ["pytest>=8.2", "pytest-asyncio>=0.24", "ruff>=0.5", "httpx>=0.27"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/trusted_service_agent"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["web", "runs"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "W"]
+
+[tool.ruff.lint.per-file-ignores]
+"data/seed.py" = ["E501"]
+"data/simulate_ops.py" = ["E501"]
+# SQL statements kept on one line each (structured blocks)
+"src/trusted_service_agent/actions.py" = ["E501"]
+"src/trusted_service_agent/identity.py" = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["trusted_service_agent"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
