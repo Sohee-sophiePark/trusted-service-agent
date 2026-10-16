@@ -31,7 +31,7 @@ def request_key(req: LLMRequest) -> str:
 
 
 class CassetteClient:
-    """`record` reuses recorded responses, appends new ones; `replay` serves identical requests."""
+    """`record` reuses recorded responses, appends new ones; `replay` serves the first recording."""
 
     def __init__(
         self, path: Path, mode: Literal["record", "replay"], inner: LLMClient | None = None
@@ -53,9 +53,8 @@ class CassetteClient:
         if self.mode == "replay":
             if key not in self.entries:
                 raise CassetteMiss(key, req.purpose)
-            n = self.served.get(key, 0)
-            self.served[key] = n + 1
-            entry = self.entries[key][min(n, len(self.entries[key]) - 1)]
+            self.served[key] = self.served.get(key, 0) + 1
+            entry = self.entries[key][0]  # identical request → identical response
             return LLMResponse.model_validate(entry["response"]).model_copy(
                 update={"source": "cassette"}
             )

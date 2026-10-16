@@ -91,7 +91,7 @@ function RecentTurns({ rows }: { rows: Recent[] }) {
     ["Handed to people", String(rows.filter((r) => r.outcome === "handoff").length)], ["Model calls", String(rows.reduce((a, r) => a + r.model_calls, 0))],
   ];
   return (
-    <Panel title="Today" kicker="from the live event log · refusals count as successes">
+    <Panel title="Today" kicker={`${source.live ? "from the live event log" : "this browser's demo session"} · refusals count as successes`}>
       <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
         {tiles.map(([k, v]) => <div key={k} className="rounded border border-line p-2"><div className="num text-xl text-signal">{v}</div><div className="text-xs text-muted">{k}</div></div>)}
       </div>
