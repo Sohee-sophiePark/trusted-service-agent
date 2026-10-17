@@ -16,7 +16,7 @@ export:       ## public replay data from recordings → web/public/data/static-d
 	RUN_MODE=replay uv run python -m trusted_service_agent.export
 dev-api:      ## local live API on 127.0.0.1:8018 (needs GEMINI_API_KEY)
 	RUN_MODE=live uv run uvicorn trusted_service_agent.api:app --host 127.0.0.1 --port 8018
-dev-web:      ## customer chat on :5173, operator console on :5173/console.html
+dev-web:      ## customer chat on :5173, operator console on :5173/console/
 	npm run dev --prefix web
 build-static: export ## static public demo into web/dist
 	VITE_STATIC=1 npm run build --prefix web

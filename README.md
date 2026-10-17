@@ -4,7 +4,7 @@ A customer-servicing agent built as a **control surface, not a chatbot**. It kno
 from approved sources with a citation, and can be **turned down before it has to be turned off**.
 
 **Live demo:** [customer chat](https://sohee-sophiepark.github.io/trusted-service-agent/) ·
-[operator console](https://sohee-sophiepark.github.io/trusted-service-agent/console.html)
+[operator console](https://sohee-sophiepark.github.io/trusted-service-agent/console/)
 (replays recorded conversations; no API key needed)
 
 > Demo only. **Tessaline Communications** is a fictional mobile and home-internet provider. Every customer, account,
@@ -17,7 +17,7 @@ Two surfaces, for two different people:
 | Surface | Used by | What it shows |
 |---|---|---|
 | **Customer chat** (`index.html`) | The end customer | Three things only: account and bill questions, install/repair/outage status, and how plans and policies work. Everything else is a polite handoff to a person. |
-| **Operator console** (`console.html`) | The service owner in the contact centre | Kill switch, traffic dial and topic toggles · the human queue with a handoff summary for each case · today's outcomes · performance and guardrails · the release check |
+| **Operator console** (`console/`) | The service owner in the contact centre | Kill switch, traffic dial and topic toggles · the human queue with a handoff summary for each case · today's outcomes · performance and guardrails · the release check |
 
 ## How a customer turn is decided
 
@@ -77,7 +77,8 @@ any model call, and any hit hands off (`config/out_of_scope.yaml`).
 
 ## Release check (evaluation)
 
-Every change must pass `make eval` before release (`config/thresholds.yaml`). Results on the recorded run:
+Every change must pass `make eval` before release: the automated thresholds of the phase 1 → 2 gate in `config/thresholds.yaml`
+(draft acceptance and SME sign-off in that gate are recorded by people, not by the script). Results on the recorded run:
 
 | Measure | Result | Threshold |
 |---|---|---|
@@ -106,6 +107,7 @@ The demo has no Salesforce dependency. This is how each part would map onto the 
 
 | Demo component | Salesforce equivalent |
 |---|---|
+| `agent.py` (one agent, one handler per topic) | One Agentforce Service agent, one topic (subagent) per intent, each with its own actions |
 | `router.py` (topics + never-do list) | Agentforce topics and instructions |
 | `actions.py` (read-only lookups) | Flow / MuleSoft actions |
 | `warehouse.py` (Snowflake-style tables) | Data 360 with zero-copy access to Snowflake |
@@ -122,7 +124,7 @@ make setup && make seed        # dependencies + fictional warehouse
 make test                      # unit and end-to-end tests, no network
 make eval                      # release check from recordings, no key
 make dev-api                   # live mode on 127.0.0.1:8018 (needs GEMINI_API_KEY in .env, free tier)
-make dev-web                   # customer chat on :5173, operator console on :5173/console.html
+make dev-web                   # customer chat on :5173, operator console on :5173/console/
 make build-static              # the public replay build in web/dist
 ```
 

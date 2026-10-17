@@ -54,3 +54,31 @@ def outages(wh: Warehouse, s: Session) -> list[dict]:
         "WHERE a.account_number = ? AND o.status = 'active'",
         [acct],
     )
+
+
+def overview(wh: Warehouse, s: Session) -> dict:
+    """What the verified customer has open now: tickets, area outages, latest bill (display-ready)."""
+    a = account_summary(wh, s)
+    return {
+        "tickets": [
+            {
+                "id": t["ticket_id"],
+                "kind": t["kind"],
+                "status": t["status"],
+                "window": f"{t['window_date']:%b %d}, {t['window_slot']}",
+            }
+            for t in ticket_status(wh, s)
+        ],
+        "outages": [
+            {"service": o["service"], "restore": f"{o['est_restore']:%H:%M}"}
+            for o in outages(wh, s)
+        ],
+        "bill": {
+            "plan": a["plan"]["plan"],
+            "autopay": a["plan"]["autopay"],
+            "issued": f"{a['latest_bill']['issued']:%b %d}",
+            "total": float(a["latest_bill"]["total"]),
+            "status": a["latest_bill"]["status"],
+            "due": a["balance_due"],
+        },
+    }

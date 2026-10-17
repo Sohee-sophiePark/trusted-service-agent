@@ -9,7 +9,7 @@ from pathlib import Path
 
 import yaml
 
-from trusted_service_agent import agent, identity, metrics
+from trusted_service_agent import actions, agent, identity, metrics
 from trusted_service_agent.api import dashboard
 from trusted_service_agent.config import settings
 from trusted_service_agent.identity import Session
@@ -98,9 +98,12 @@ def main() -> None:
             {
                 "dashboard": board,
                 "turns": recorded,
-                "examples": EXAMPLES,
                 "control": control,
-                "accounts": {"account": DEMO_ACCOUNT, "postal": postal},
+                "accounts": {
+                    "account": DEMO_ACCOUNT,
+                    "postal": postal,
+                    "overview": actions.overview(wh, identity.verify(wh, DEMO_ACCOUNT, postal)),
+                },
             }
         )
     )

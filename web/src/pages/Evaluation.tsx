@@ -12,7 +12,7 @@ export default function Evaluation({ r }: { r: EvalReport | null }) {
   if (!r) return <p className="text-muted">No release check has been run yet.</p>;
   return (
     <div className="space-y-3">
-      <Panel title="Release check" kicker={`${r.routing_cases} routing · ${r.golden_cases} golden cases · every change must pass before release`}>
+      <Panel title="Release check" kicker={`gate phase_1_to_2 (automated thresholds) · ${r.routing_cases} routing · ${r.golden_cases} golden cases · every change must pass before release`}>
         <div className="rounded-md border-2 border-bad/60 bg-bad/10 p-3">
           <div className="text-xs font-semibold uppercase tracking-widest text-bad">False containment rate — the dangerous one</div>
           <div className="num text-3xl font-semibold text-bad">{pct(r.false_containment_rate, 1)}</div>

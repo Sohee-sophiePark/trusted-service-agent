@@ -45,6 +45,9 @@ def test_identity_gate(wh):
     assert identity.verify(wh, "TS-100201", "X0X 0X0").account_number is None
     with pytest.raises(NotVerified):
         actions.account_summary(wh, Session())
+    with pytest.raises(NotVerified):
+        actions.overview(wh, Session())
+    assert actions.overview(wh, verified(wh))["tickets"][0]["id"] == "44812"
 
 
 def test_no_write_path_exists_in_the_code():

@@ -1,7 +1,7 @@
 import { Bar, BarChart, CartesianGrid, LabelList, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Light, Panel } from "../components/Status";
 import { money, pct, signedPct } from "../lib/format";
-import type { Dashboard, Week } from "../lib/types";
+import type { Dashboard, Today, Week } from "../lib/types";
 
 const AXIS = { stroke: "#9AA1AC", fontSize: 11, tickLine: false, axisLine: { stroke: "#2E333D" } };
 const GRID = <CartesianGrid stroke="#2E333D" strokeDasharray="2 4" vertical={false} />;
@@ -10,16 +10,40 @@ const endLabel = (name: string, n: number) => (p: { x?: number | string; y?: num
   p.index === n - 1 ? <text x={Number(p.x) + 6} y={Number(p.y) + 4} fill="#E6E8EB" fontSize={10}>{name}</text> : null;
 const LINE = { strokeWidth: 2, dot: { r: 4, strokeWidth: 2, stroke: "#1C1F26" }, activeDot: { r: 6 }, isAnimationActive: false } as const;
 
+const TODAY_KICKER = import.meta.env.VITE_STATIC ? "recorded demo session · this system's own telemetry, not simulated" : "live telemetry · today · not simulated";
+
+function TodayStrip({ t }: { t: Today }) {
+  const cells: [string, string][] = [
+    ["Contacts", String(t.contacts)],
+    ["Agent-handled", String(t.agent_contacts)],
+    ["Resolved", String(t.resolved)],
+    ["Handoffs (never-do)", `${t.handoffs} (${t.never_do_handoffs})`],
+    ["Escalation rate", t.escalation_rate == null ? "—" : pct(t.escalation_rate)],
+    ["To humans by control", String(t.to_humans_by_control)],
+    ["Model calls", String(t.model_calls)],
+  ];
+  return (
+    <Panel title="Today" kicker={TODAY_KICKER}>
+      <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs md:grid-cols-4 xl:grid-cols-7">
+        {cells.map(([k, v]) => (
+          <div key={k}><dt className="text-muted">{k}</dt><dd className="num text-lg font-semibold text-ink">{v}</dd></div>
+        ))}
+      </dl>
+    </Panel>
+  );
+}
+
 function Tiles({ d }: { d: Dashboard }) {
   const last = d.ops.weekly.at(-1) as Week;
   const cprc = d.ops.cprc_monthly.at(-1)!;
+  const incidents = d.ops.weekly.reduce((a, w) => a + w.compliance_incidents, 0);
   const tiles: { k: string; v: string; sub: string; ok: boolean }[] = [
     { k: "Verified resolution", v: pct(last.vrr), sub: "absolute · target 30%", ok: last.vrr >= 0.3 },
     { k: "Cost per resolved contact", v: money(cprc.agent), sub: `vs control ${money(cprc.control)} (${signedPct(cprc.agent / cprc.control - 1)})`, ok: cprc.agent < cprc.control },
     { k: "CSAT (% scoring 4–5)", v: pct(last.csat_agent), sub: `vs control ${pct(last.csat_control)}`, ok: last.csat_agent >= last.csat_control },
     { k: "Escalation rate", v: pct(last.escalation_rate), sub: "handoffs ÷ agent contacts", ok: true },
     { k: "False containment", v: pct(last.false_containment, 1), sub: "kept what it should have escalated · max 2%", ok: last.false_containment <= 0.02 },
-    { k: "Compliance incidents", v: String(d.ops.weekly.reduce((a, w) => a + w.compliance_incidents, 0)), sub: "absolute · one pauses rollout", ok: true },
+    { k: "Compliance incidents", v: String(incidents), sub: "absolute · one → operator pauses via kill switch", ok: incidents === 0 },
   ];
   return (
     <section aria-label="Key measures" className="grid grid-cols-2 gap-2 md:grid-cols-3 xl:grid-cols-6">
@@ -96,6 +120,7 @@ function Guardrails({ d }: { d: Dashboard }) {
     </figure>
   );
   const last = d.ops.weekly.at(-1)!;
+  const incidents = d.ops.weekly.reduce((a, w) => a + w.compliance_incidents, 0);
   return (
     <Panel title="Guardrails" kicker="dashed line = limit · simulated history">
       <div className="grid gap-4 md:grid-cols-3">
@@ -105,7 +130,7 @@ function Guardrails({ d }: { d: Dashboard }) {
       </div>
       <p className="mt-3 text-xs text-muted">
         Escalation handle time <span className="num text-ink">{signedPct(last.escalation_handle_time_delta)}</span> vs today ·
-        compliance incidents <span className="num text-ink">0</span> (auto-pause armed) · week 6 dip: new plan prices were missing from the index, re-indexed in week 7.
+        compliance incidents <span className="num text-ink">{incidents}</span> (any incident: operator pauses via the kill switch) · week 6 dip: new plan prices were missing from the index, re-indexed in week 7.
       </p>
     </Panel>
   );
@@ -134,6 +159,7 @@ function Intents({ d }: { d: Dashboard }) {
 export default function Performance({ d }: { d: Dashboard }) {
   return (
     <div className="space-y-3">
+      <TodayStrip t={d.today} />
       <p className="text-xs text-muted">{d.ops.label}</p>
       <Tiles d={d} />
       <Trends d={d} />

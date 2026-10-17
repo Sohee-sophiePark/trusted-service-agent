@@ -116,7 +116,8 @@ def main() -> int:
         print(f"{k:24s}{m[k]:7.1%}  {mark}")
     ok = all(checks.values())
     print(
-        f"\nRelease check: {GREEN + 'PASS' if ok else RED + 'FAIL'}{RESET}  "
+        f"\nRelease check, gate phase_1_to_2 (automated thresholds; draft acceptance and"
+        f" SME sign-off are recorded by people): {GREEN + 'PASS' if ok else RED + 'FAIL'}{RESET}  "
         f"[{m['routing_cases']} routing · {m['golden_cases']} golden · model calls {gw.calls}]"
     )
     report = {k: v for k, v in m.items()} | {"gate": checks, "pass": ok, "model_calls": gw.calls}

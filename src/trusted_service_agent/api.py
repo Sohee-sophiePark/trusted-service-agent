@@ -7,7 +7,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 
-from trusted_service_agent import agent, control, identity, metrics, telemetry
+from trusted_service_agent import actions, agent, control, identity, metrics, telemetry
 from trusted_service_agent.config import settings
 from trusted_service_agent.identity import Session
 from trusted_service_agent.llm.gateway import Gateway
@@ -67,7 +67,8 @@ async def chat(body: ChatIn) -> dict:
 def verify(body: VerifyIn) -> dict:
     s = identity.verify(wh, body.account_number, body.postal_code)
     sessions[body.session_id] = s
-    return {"verified": bool(s.account_number)}
+    ok = bool(s.account_number)
+    return {"verified": ok, "overview": actions.overview(wh, s) if ok else None}
 
 
 @app.get("/api/control")

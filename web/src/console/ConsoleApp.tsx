@@ -21,7 +21,7 @@ export default function ConsoleApp() {
           <p className="text-xs text-muted">Operator console · Tessaline Communications (fictional) · turn it down before you have to turn it off</p>
         </div>
         <div className="flex items-center gap-2">
-          <a href="./index.html" target="_blank" className="rounded border border-line px-2 py-1 text-xs text-muted hover:text-ink">Open customer chat ↗</a>
+          <a href="../" target="_blank" className="rounded border border-line px-2 py-1 text-xs text-muted hover:text-ink">Open customer chat ↗</a>
           <span className="rounded border border-line px-2 py-1 font-mono text-xs text-muted">{source.live ? "● LIVE · laptop" : "◐ REPLAY · public demo"}</span>
         </div>
       </header>

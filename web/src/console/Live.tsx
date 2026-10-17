@@ -6,13 +6,8 @@ import type { Control, QueuedCard, Recent } from "../lib/types";
 
 export const TOPIC_LABEL: Record<string, string> = { account_questions: "Account questions", ticket_status: "Ticket & outage status", product_guidance: "Product guidance" };
 
-/** FNV-1a + murmur3 fmix32: a stable, well-spread 0–1 value per id. */
-export const bucket = (id: string) => {
-  let h = 0x811c9dc5;
-  for (const c of id) { h ^= c.charCodeAt(0); h = Math.imul(h, 0x01000193); }
-  h ^= h >>> 16; h = Math.imul(h, 0x85ebca6b); h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35); h ^= h >>> 16;
-  return (h >>> 0) / 2 ** 32;
-};
+/** Evenly spread 0–1 value for simulated contact i: any dial share is met to within one contact. */
+const spread = (i: number) => (i * 0.6180339887498949) % 1;
 
 function Controls({ ctl, set }: { ctl: Control; set: (c: Control) => void }) {
   return (
@@ -36,7 +31,7 @@ function Controls({ ctl, set }: { ctl: Control; set: (c: Control) => void }) {
           {Object.entries(ctl.topics).map(([t, on]) => (
             <label key={t} className="mt-1 flex items-center justify-between text-sm">
               {TOPIC_LABEL[t]}
-              <input type="checkbox" checked={on} onChange={() => set({ ...ctl, topics: { ...ctl.topics, [t]: !on } })} className="h-4 w-4 accent-[#F5B83D]" />
+              <input type="checkbox" aria-label={TOPIC_LABEL[t]} checked={on} onChange={() => set({ ...ctl, topics: { ...ctl.topics, [t]: !on } })} className="h-4 w-4 accent-[#F5B83D]" />
             </label>
           ))}
         </fieldset>
@@ -47,7 +42,7 @@ function Controls({ ctl, set }: { ctl: Control; set: (c: Control) => void }) {
 
 function Incoming({ ctl }: { ctl: Control }) {
   const n = 1000;
-  const agent = useMemo(() => (ctl.kill_switch ? 0 : Array.from({ length: n }, (_, i) => bucket(`incoming-${i}`)).filter((b) => b < ctl.traffic_share).length), [ctl]);
+  const agent = useMemo(() => (ctl.kill_switch ? 0 : Array.from({ length: n }, (_, i) => spread(i)).filter((b) => b < ctl.traffic_share).length), [ctl]);
   return (
     <Panel title="Incoming contacts" kicker="simulated batch of 1,000 · moves with the dial">
       <div className="grid grid-cols-2 gap-2 text-center">
