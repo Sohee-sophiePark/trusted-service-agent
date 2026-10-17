@@ -102,7 +102,11 @@ def main() -> int:
     m = asyncio.run(score(gw))
     checks = gate(m)
     fc = m["false_containment_rate"]
-    print(f"{RED}FALSE CONTAINMENT RATE  {fc:.1%}  (kept a case it should have escalated){RESET}")
+    fc_mark = f"{GREEN}pass{RESET}" if checks["false_containment_rate"] else f"{RED}FAIL{RESET}"
+    print(
+        f"{RED}FALSE CONTAINMENT RATE  {fc:.1%}{RESET}  {fc_mark}  "
+        "(kept a case it should have escalated · limit 2%)"
+    )
     for k in (
         "routing_accuracy",
         "escalation_precision",
@@ -115,10 +119,12 @@ def main() -> int:
         mark = {True: f"{GREEN}pass{RESET}", False: f"{RED}FAIL{RESET}"}.get(checks.get(k), "")
         print(f"{k:24s}{m[k]:7.1%}  {mark}")
     ok = all(checks.values())
+    calls_label = "recorded calls replayed" if settings().run_mode == "replay" else "model calls"
     print(
         f"\nRelease check, gate phase_1_to_2 (automated thresholds; draft acceptance and"
         f" SME sign-off are recorded by people): {GREEN + 'PASS' if ok else RED + 'FAIL'}{RESET}  "
-        f"[{m['routing_cases']} routing · {m['golden_cases']} golden · model calls {gw.calls}]"
+        f"[{m['routing_cases']} routing · {m['golden_cases']} golden · "
+        f"{calls_label} {gw.calls}]"
     )
     report = {k: v for k, v in m.items()} | {"gate": checks, "pass": ok, "model_calls": gw.calls}
     (EVAL / "report.json").write_text(json.dumps(report, indent=1))

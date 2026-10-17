@@ -22,13 +22,13 @@ export default function ConsoleApp() {
         </div>
         <div className="flex items-center gap-2">
           <a href="../" target="_blank" className="rounded border border-line px-2 py-1 text-xs text-muted hover:text-ink">Open customer chat ↗</a>
-          <span className="rounded border border-line px-2 py-1 font-mono text-xs text-muted">{source.live ? "● LIVE · laptop" : "◐ REPLAY · public demo"}</span>
+          <span className="px-2 py-1 font-mono text-xs text-muted">{source.live ? "● LIVE · laptop" : "◐ REPLAY · public demo"}</span>
         </div>
       </header>
       <nav className="mb-3 flex gap-1" aria-label="Sections">
         {TABS.map((t) => (
           <button key={t} onClick={() => setTab(t)} aria-current={tab === t ? "page" : undefined}
-            className={`rounded-md px-3 py-1.5 text-sm ${tab === t ? "bg-signal font-semibold text-bg" : "text-muted hover:text-ink"}`}>{t}</button>
+            className={`border-b-2 px-3 py-1.5 text-sm ${tab === t ? "border-signal font-semibold text-ink" : "border-transparent text-muted hover:border-line hover:text-ink"}`}>{t}</button>
         ))}
       </nav>
       {tab === "Live" ? <Live /> : !d ? <p className="text-muted">Loading…</p> : tab === "Performance" ? <Performance d={d} /> : <Evaluation r={d.eval} />}

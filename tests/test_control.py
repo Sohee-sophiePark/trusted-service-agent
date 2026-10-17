@@ -9,7 +9,6 @@ def write(tmp_path: Path, **over) -> Path:
     cfg = {
         "kill_switch": False,
         "traffic_share": 0.10,
-        "auto_pause_on_compliance_incident": True,
         "topics": {"account_questions": True, "ticket_status": True, "product_guidance": True},
     }
     cfg.update(over)

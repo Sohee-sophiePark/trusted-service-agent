@@ -3,8 +3,10 @@
 import json
 import uuid
 from pathlib import Path
+from typing import Literal
 
 from fastapi import FastAPI
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from pydantic import BaseModel, Field
 
 from trusted_service_agent import actions, agent, control, identity, metrics, telemetry
@@ -16,6 +18,7 @@ from trusted_service_agent.paths import DATA, ROOT
 from trusted_service_agent.warehouse import Warehouse
 
 app = FastAPI(title="Trusted Service Agent")
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=["127.0.0.1", "localhost"])
 wh = Warehouse()
 sessions: dict[str, Session] = {}
 
@@ -44,7 +47,7 @@ class VerifyIn(BaseModel):
 class ControlIn(BaseModel):
     kill_switch: bool
     traffic_share: float = Field(ge=0, le=1)
-    topics: dict[str, bool]
+    topics: dict[Literal["account_questions", "ticket_status", "product_guidance"], bool]
 
 
 @app.get("/api/session")
@@ -68,7 +71,12 @@ def verify(body: VerifyIn) -> dict:
     s = identity.verify(wh, body.account_number, body.postal_code)
     sessions[body.session_id] = s
     ok = bool(s.account_number)
-    return {"verified": ok, "overview": actions.overview(wh, s) if ok else None}
+    ov = actions.overview(wh, s) if ok and control.admit(body.session_id).agent else None
+    if ov and not control.topic_enabled("ticket_status"):
+        ov["tickets"], ov["outages"] = [], []
+    if ov and not control.topic_enabled("account_questions"):
+        ov["bill"] = None
+    return {"verified": ok, "overview": ov}
 
 
 @app.get("/api/control")

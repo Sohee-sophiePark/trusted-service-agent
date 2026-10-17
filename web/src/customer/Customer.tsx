@@ -71,14 +71,14 @@ export default function Customer() {
   }
 
   const on = (topic: string) => !!ctl && !ctl.kill_switch && ctl.topics[topic];
-  const sub = (q: string) => <button key={q} onClick={() => ask(q)} disabled={busy} className="block w-full py-1 pl-5 pr-2 text-left text-xs text-c-muted hover:text-c-ink">{q}</button>;
+  const sub = (q: string) => <button key={q} onClick={() => ask(q)} disabled={busy} className="block w-full py-1.5 pl-5 pr-2 text-left text-sm text-c-ink hover:underline disabled:opacity-50">{q}</button>;
   const topic = (key: string, label: string, qs: string[], quiet = false) => (
     <li key={key}>
       <button onClick={() => setOpen(open === key ? null : key)} aria-expanded={open === key}
-        className={`flex w-full justify-between rounded-lg border border-c-line px-3 py-2 text-left text-sm hover:border-c-brand ${quiet ? "text-c-muted" : "font-semibold"}`}>
+        className={`flex w-full justify-between rounded-lg border border-c-line px-3 py-2 text-left text-sm hover:border-c-brand aria-expanded:border-c-brand aria-expanded:bg-c-soft ${quiet ? "text-c-muted" : "font-semibold"}`}>
         {label}<span className="text-c-muted" aria-hidden="true">{open === key ? "−" : "+"}</span>
       </button>
-      {open === key && <div className="py-1">{quiet && <p className="pl-5 text-xs text-c-brand">Demo: try what the agent hands to a person</p>}{qs.map(sub)}</div>}
+      {open === key && <div className="py-1">{quiet && <p className="pl-5 text-xs text-c-brand">Demo: questions the assistant passes to our team</p>}{qs.map(sub)}</div>}
     </li>
   );
 
@@ -98,7 +98,7 @@ export default function Customer() {
             {on("ticket_status") && overview.outages.map((o) => (
               <Row key={o.service} dot="bg-bad" title={`${o.service[0].toUpperCase()}${o.service.slice(1)} outage in your area`} sub={`Estimated restoration ${o.restore}`} onClick={() => ask("is there an outage in my area")} />
             ))}
-            {on("account_questions") && (
+            {on("account_questions") && overview.bill && (
               <Row dot={overview.bill.due > 0 ? "bg-warn" : "bg-good"} title={`${overview.bill.plan} · $${overview.bill.due.toFixed(2)} due`}
                 sub={`${overview.bill.issued} bill $${overview.bill.total.toFixed(2)} ${overview.bill.status}${overview.bill.autopay ? " · autopay on" : ""}`} onClick={() => ask("what's my balance right now")} />
             )}
@@ -130,20 +130,20 @@ export default function Customer() {
         </form>
       )}
       {ctl?.kill_switch ? (
-        <p className="mt-3 rounded-lg border border-c-line px-3 py-2 text-sm text-c-muted">Our team is handling chats directly right now. Type your question and a member of our team will pick it up.</p>
+        <p className="mt-3 rounded-lg border border-c-line px-3 py-2 text-sm text-c-ink">Our team is handling chats directly right now. Type your question and a member of our team will pick it up.</p>
       ) : ctl && (
         <nav aria-label="How can I help?" className="mt-3">
           <h2 className="mb-1 text-sm font-semibold">How can I help?</h2>
           <ul className="space-y-1.5">
             {MENU.filter(([k]) => ctl.topics[k]).map(([k, label, qs]) => topic(k, label, qs))}
-            {topic("other", "Something else · talk to a person", OTHER, true)}
+            {topic("other", "Something else · talk to our team", OTHER, true)}
           </ul>
         </nav>
       )}
       <form onSubmit={(e) => { e.preventDefault(); ask(text); }} className="mt-2 flex gap-2">
         <input value={text} onChange={(e) => setText(e.target.value)} maxLength={500} placeholder="Type your question…" aria-label="Your question"
           className="flex-1 rounded-lg border border-c-field px-3 py-2 text-sm" />
-        <button disabled={busy} className="rounded-lg bg-signal px-4 text-sm font-semibold text-c-ink">{busy ? "…" : "Send"}</button>
+        <button disabled={busy} className="rounded-lg bg-signal px-4 text-sm font-semibold text-c-ink disabled:opacity-60">{busy ? "…" : "Send"}</button>
       </form>
     </div>
   );

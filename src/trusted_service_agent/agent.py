@@ -46,7 +46,13 @@ async def turn(
     sink: Path = telemetry.SINK,
 ) -> Turn:
     start = gw.calls
-    result = await _turn(contact_id, text, session, wh, gw, control_file)
+    try:
+        result = await _turn(contact_id, text, session, wh, gw, control_file)
+    except Exception:  # a failed turn is a handoff, never a dropped customer; it is still logged
+        card = HandoffCard(
+            queue="servicing", reason="agent_error", summary=None, customer_text=text
+        )
+        result = Turn("handoff", card=card)
     result.model_calls = gw.calls - start
     if result.card:
         telemetry.emit(

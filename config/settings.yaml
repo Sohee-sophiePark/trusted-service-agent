@@ -1,5 +1,5 @@
 run_mode: replay                 # live | record | replay   (env RUN_MODE overrides)
-# Free-tier models only, newest first. Verified on ai.google.dev/gemini-api/docs/pricing (updated 2026-10-15) ✅ 2026-10-16.
+# Free-tier models only, newest first. Per ai.google.dev/gemini-api/docs/pricing (2026-10-15).
 models:
   router: [gemini-3.5-flash-lite, gemini-3.1-flash-lite, gemini-2.5-flash-lite]
   writer: [gemini-3.8-flash, gemini-3.6-flash, gemini-3.5-flash-lite, gemini-2.5-flash]

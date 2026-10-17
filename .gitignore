@@ -68,3 +68,6 @@ web/dist/
 # Web build output and data exported from replays at build time
 web/dist/
 web/public/data/
+*.env~
+*secret*
+*token*

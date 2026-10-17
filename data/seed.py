@@ -70,7 +70,7 @@ PLANS = {
     "Internet 1G": 90.0,
 }
 
-# Week-1 baseline mined from case history and transcripts (scenario script §3; fictional).
+# Week-1 baseline mined from case history and transcripts (fictional).
 BASELINE = [
     ("Billing & account questions", "account_questions", 0.26, 8.2, 0.61, 0.27, "in_mvp_slice"),
     ("Install / repair ticket status", "ticket_status", 0.18, 5.1, 0.74, 0.21, "in_mvp_slice"),

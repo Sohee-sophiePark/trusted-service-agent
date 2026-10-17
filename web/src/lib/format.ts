@@ -9,6 +9,6 @@ export const REASON_LABEL: Record<string, string> = {
   topic_off: "Topic switched off", dispute: "Never-do: billing dispute", complaint: "Never-do: complaint",
   account_change: "Never-do: account change", vulnerable: "Never-do: vulnerable customer",
   advice: "Never-do: plan-suitability advice", unsafe_input: "Never-do: instructions aimed at the agent",
-  out_of_scope: "Out of scope (MVP)", low_confidence: "Low routing confidence", no_citation: "No citation, no answer",
-  no_open_ticket: "No open ticket found",
+  out_of_scope: "Out of scope", low_confidence: "Low routing confidence", no_citation: "No citation, no answer",
+  no_open_ticket: "No open ticket found", agent_error: "Agent error — handed off without a summary",
 };

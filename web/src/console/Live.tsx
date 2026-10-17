@@ -14,9 +14,9 @@ function Controls({ ctl, set }: { ctl: Control; set: (c: Control) => void }) {
     <Panel title="Control plane" kicker="read before every customer turn">
       <div className="space-y-4">
         <label className="flex items-center justify-between gap-3">
-          <span><span className="block text-sm font-semibold">Kill switch</span><span className="text-xs text-muted">Layer 3 · everything to human agents, no model call</span></span>
-          <button role="switch" aria-checked={ctl.kill_switch} onClick={() => set({ ...ctl, kill_switch: !ctl.kill_switch })}
-            className={`h-9 w-20 rounded-md border-2 font-mono text-xs font-semibold ${ctl.kill_switch ? "border-bad bg-bad/20 text-bad" : "border-line bg-panel-2 text-muted"}`}>
+          <span><span className="block text-sm font-semibold">Kill switch</span><span className="block text-xs text-muted">Layer 3 · everything to human agents, no model call</span></span>
+          <button role="switch" aria-label="Kill switch" aria-checked={ctl.kill_switch} onClick={() => set({ ...ctl, kill_switch: !ctl.kill_switch })}
+            className={`h-9 w-20 rounded-md border-2 font-mono text-xs font-semibold ${ctl.kill_switch ? "border-bad bg-bad/20 text-bad" : "border-line bg-panel-2 text-muted hover:border-muted hover:text-ink"}`}>
             {ctl.kill_switch ? "■ ON" : "○ OFF"}
           </button>
         </label>
@@ -66,9 +66,9 @@ function Queue({ cards }: { cards: QueuedCard[] }) {
                 <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5">
                   <dt className="text-muted">Goal</dt><dd>{c.summary.customer_goal}</dd>
                   <dt className="text-muted">Done</dt><dd>{c.summary.already_done.join(" · ") || "—"}</dd>
-                  <dt className="text-muted">Resolve</dt><dd>{c.summary.open_question}</dd>
+                  <dt className="text-muted">To resolve</dt><dd>{c.summary.open_question}</dd>
                   <dt className="text-muted">Sentiment</dt><dd>{c.summary.sentiment}{c.summary.vulnerability_flag && <span className="ml-2 text-warn">◐ vulnerability flag</span>}</dd>
-                  {c.summary.do_not_repeat.length > 0 && <><dt className="text-muted">Don't ask</dt><dd>{c.summary.do_not_repeat.join(" · ")}</dd></>}
+                  {c.summary.do_not_repeat.length > 0 && <><dt className="text-muted">Don't ask again</dt><dd>{c.summary.do_not_repeat.join(" · ")}</dd></>}
                 </dl>
               ) : <p className="mt-2 text-muted">No summary: the agent never handled this contact.</p>}
             </li>
@@ -83,12 +83,12 @@ function RecentTurns({ rows }: { rows: Recent[] }) {
   const agent = rows.filter((r) => r.reason !== "kill_switch" && r.reason !== "traffic_share");
   const tiles = [
     ["Customer turns", String(rows.length)], ["Resolved by the agent", String(agent.filter((r) => r.outcome === "resolved").length)],
-    ["Handed to people", String(rows.filter((r) => r.outcome === "handoff").length)], ["Model calls", String(rows.reduce((a, r) => a + r.model_calls, 0))],
+    ["Handed to human agents", String(rows.filter((r) => r.outcome === "handoff").length)], ["Model calls", String(rows.reduce((a, r) => a + r.model_calls, 0))],
   ];
   return (
-    <Panel title="Today" kicker={`${source.live ? "from the live event log" : "this browser's demo session"} · refusals count as successes`}>
+    <Panel title={source.live ? "Recent turns" : "Your demo session"} kicker={`${source.live ? "last 50 turns from the event log" : "your clicks in this browser only"} · refusals count as successes`}>
       <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
-        {tiles.map(([k, v]) => <div key={k} className="rounded border border-line p-2"><div className="num text-xl text-signal">{v}</div><div className="text-xs text-muted">{k}</div></div>)}
+        {tiles.map(([k, v]) => <div key={k} className="rounded border border-line p-2"><div className="text-xs text-muted">{k}</div><div className="num text-xl font-semibold text-signal">{v}</div></div>)}
       </div>
       <table className="mt-3 w-full text-xs">
         <thead className="text-left text-muted"><tr><th className="py-1">Time</th><th>Outcome</th><th>Topic</th><th>Why</th><th className="text-right">Model calls</th></tr></thead>

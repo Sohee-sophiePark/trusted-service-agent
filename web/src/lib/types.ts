@@ -26,9 +26,9 @@ export interface Summary { customer_goal: string; already_done: string[]; open_q
 export interface Card { queue: string; reason: string; summary: Summary | null; customer_text: string }
 export interface Citation { id: string; title: string; heading: string; effective: string; quote: string }
 export interface Turn { outcome: "resolved" | "handoff" | "identity_requested"; topic: string | null; answer: string | null; citation: Citation | null; card: Card | null; model_calls: number }
-export interface Control { kill_switch: boolean; traffic_share: number; topics: Record<string, boolean>; auto_pause_on_compliance_incident: boolean }
+export interface Control { kill_switch: boolean; traffic_share: number; topics: Record<string, boolean> }
 export interface Overview {
   tickets: { id: string; kind: string; status: string; window: string }[];
   outages: { service: string; restore: string }[];
-  bill: { plan: string; autopay: boolean; issued: string; total: number; status: string; due: number };
+  bill: { plan: string; autopay: boolean; issued: string; total: number; status: string; due: number } | null;
 }

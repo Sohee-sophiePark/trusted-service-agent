@@ -5,4 +5,3 @@ topics:                     # layer 1 — narrow the scope
   account_questions: true
   ticket_status: true
   product_guidance: true
-auto_pause_on_compliance_incident: true

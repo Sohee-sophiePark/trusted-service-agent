@@ -48,7 +48,6 @@ def save(cfg: dict, path: Path = CONTROL_FILE) -> None:
         f"kill_switch: {str(cfg['kill_switch']).lower()}          # layer 3 — everything to humans, no model call\n"
         f"traffic_share: {cfg['traffic_share']:.2f}         # layer 2 — fraction of contacts the agent handles\n"
         "topics:                     # layer 1 — narrow the scope\n"
-        + "".join(f"  {k}: {str(v).lower()}\n" for k, v in t.items())
-        + f"auto_pause_on_compliance_incident: {str(cfg['auto_pause_on_compliance_incident']).lower()}\n",
+        + "".join(f"  {k}: {str(v).lower()}\n" for k, v in t.items()),
         encoding="utf-8",
     )

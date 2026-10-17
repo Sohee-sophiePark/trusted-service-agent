@@ -22,7 +22,6 @@ def ctl(tmp_path: Path, **over) -> Path:
     cfg = {
         "kill_switch": False,
         "traffic_share": 1.0,
-        "auto_pause_on_compliance_incident": True,
         "topics": {"account_questions": True, "ticket_status": True, "product_guidance": True},
     }
     cfg.update(over)
@@ -195,3 +194,13 @@ async def test_topic_toggled_off_routes_to_a_human(tmp_path, wh, gw, scripted):
         tmp_path / "t.jsonl",
     )
     assert (t.outcome, t.card.reason) == ("handoff", "topic_off")
+
+
+async def test_failed_turn_is_a_logged_handoff(tmp_path, wh, gw, scripted):
+    scripted.add("writer", reply(customer_goal="x" * 200))  # invalid summary → writer raises
+    sink = tmp_path / "t.jsonl"
+    t = await agent.turn(
+        "c3", "I want to make a formal complaint", Session(), wh, gw, ctl(tmp_path), sink
+    )
+    assert (t.outcome, t.card.reason, t.card.summary) == ("handoff", "agent_error", None)
+    assert '"reason": "agent_error"' in sink.read_text()

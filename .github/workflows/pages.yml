@@ -19,8 +19,10 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: web/package-lock.json
-      - run: uv sync
+      - run: uv sync --locked
       - run: uv run python data/seed.py
+      - name: Release check (replays recorded model calls; no key)
+        run: RUN_MODE=replay uv run python eval/run_eval.py
       - name: Export the public replay data (recorded turns; no key)
         run: RUN_MODE=replay uv run python -m trusted_service_agent.export
       - run: npm ci --prefix web

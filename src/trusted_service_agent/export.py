@@ -66,7 +66,6 @@ async def turns(wh: Warehouse, gw: Gateway, tmp: Path) -> dict:
                 {
                     "kill_switch": False,
                     "traffic_share": 1.0,
-                    "auto_pause_on_compliance_incident": True,
                     "topics": {
                         "account_questions": True,
                         "ticket_status": True,

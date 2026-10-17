@@ -16,7 +16,7 @@ Two surfaces, for two different people:
 
 | Surface | Used by | What it shows |
 |---|---|---|
-| **Customer chat** (`index.html`) | The end customer | Three things only: account and bill questions, install/repair/outage status, and how plans and policies work. Everything else is a polite handoff to a person. |
+| **Customer chat** (`index.html`) | The end customer | Three things only: account and bill questions, install/repair/outage status, and how plans and policies work. Everything else is a polite handoff to a human agent. |
 | **Operator console** (`console/`) | The service owner in the contact centre | Kill switch, traffic dial and topic toggles · the human queue with a handoff summary for each case · today's outcomes · performance and guardrails · the release check |
 
 ## How a customer turn is decided
@@ -47,9 +47,9 @@ every turn ─► event log ─► operator console
 |---|---|
 | Control plane first | Read before routing on every turn; the kill switch makes zero model calls (tested) |
 | No citation, no answer | The quoted sentence must appear verbatim in the cited policy section, or the agent hands off |
-| Read-only | There is no write path: a test fails on any `INSERT/UPDATE/DELETE/CREATE` in the source; the warehouse opens read-only |
+| Read-only | There is no write path: a test fails on any `INSERT/UPDATE/DELETE/CREATE/DROP/ALTER/MERGE` in `src/`; the warehouse opens read-only |
 | Identity before account data | Lookups raise without a verified session (account number + service-address postal code) |
-| Transcripts never answer customers | Used only to find contact reasons and build test sets; a test asserts they are unreachable from the answer path |
+| Transcripts never answer customers | Used only to find contact reasons and build test sets; a test asserts no file in `src/` references them |
 | A refusal is a success | Every turn, including handoffs, is logged and counted |
 | Facts come from code | Balances, due dates, ticket windows and outage times are lookups, never generated |
 
@@ -71,9 +71,20 @@ any model call, and any hit hands off (`config/out_of_scope.yaml`).
 
 | Layer | Control | Effect |
 |---|---|---|
-| 1 | Topic toggle | One topic goes to people; the rest keep working |
+| 1 | Topic toggle | One topic goes to human agents; the rest keep working |
 | 2 | Traffic dial | The share of contacts the agent handles (stable per contact) |
-| 3 | Kill switch | Everything to people, no model call |
+| 3 | Kill switch | Everything to human agents, no model call |
+
+## Run it
+
+```bash
+make setup && make seed        # dependencies + fictional warehouse
+make test                      # unit and end-to-end tests, no network
+make eval                      # release check from recordings, no key
+make dev-api                   # live mode on 127.0.0.1:8018 (needs GEMINI_API_KEY in .env, free tier)
+make dev-web                   # customer chat on :5173, operator console on :5173/console/
+make build-static              # the public replay build in web/dist
+```
 
 ## Release check (evaluation)
 
@@ -86,10 +97,10 @@ Every change must pass `make eval` before release: the automated thresholds of t
 | Routing accuracy (42 cases) | 97.6% | ≥ 92% |
 | Escalation precision / recall | 100% / 100% | — |
 | Golden-set accuracy (30 cases: answer + exact source) | 100% | ≥ 90% |
-| Groundedness / citation accuracy | 100% / 100% | ≥ 95% |
+| Groundedness / citation accuracy | 100% / 100% | ≥ 95% / — |
 
 The one routing miss ("can I get a paper bill" sent to account questions) is kept as found. Demo sets are small;
-production would use around 200 SME-signed cases. Models: free-tier Gemini, newest first with fallback on quota,
+production would use a larger set signed off by subject-matter experts. Models: free-tier Gemini, newest first with fallback on quota,
 overload or timeout; the model that served each call is recorded.
 
 ## Measures the console reports
@@ -103,11 +114,11 @@ overload or timeout; the model that served each call is recorded.
 
 ## How it would map to Salesforce
 
-The demo has no Salesforce dependency. This is how each part would map onto the platform:
+The demo has no Salesforce dependency. A proposed mapping of each part onto the platform (a design proposal, not a Salesforce build):
 
 | Demo component | Salesforce equivalent |
 |---|---|
-| `agent.py` (one agent, one handler per topic) | One Agentforce Service agent, one topic (subagent) per intent, each with its own actions |
+| `agent.py` (one agent, three topics, one handler each) | One Agentforce Service agent, one topic (subagent) per intent, each with its own actions |
 | `router.py` (topics + never-do list) | Agentforce topics and instructions |
 | `actions.py` (read-only lookups) | Flow / MuleSoft actions |
 | `warehouse.py` (Snowflake-style tables) | Data 360 with zero-copy access to Snowflake |
@@ -116,17 +127,6 @@ The demo has no Salesforce dependency. This is how each part would map onto the 
 | `handoff.py` (summary for the human agent) | Omni-Channel transfer with a summary |
 | `eval/run_eval.py` | Testing Center |
 | Operator console metrics | Agentforce analytics and observability |
-
-## Run it
-
-```bash
-make setup && make seed        # dependencies + fictional warehouse
-make test                      # unit and end-to-end tests, no network
-make eval                      # release check from recordings, no key
-make dev-api                   # live mode on 127.0.0.1:8018 (needs GEMINI_API_KEY in .env, free tier)
-make dev-web                   # customer chat on :5173, operator console on :5173/console/
-make build-static              # the public replay build in web/dist
-```
 
 ## Stack
 
@@ -137,7 +137,7 @@ Tailwind CSS · Recharts · GitHub Actions · GitHub Pages
 
 ```
 config/      control plane, topics, never-do list, release thresholds, model settings
-data/        warehouse seed (fictional), 8 approved policy documents, 30 redacted transcript snippets, simulated history
+data/        warehouse seed (fictional), 8 approved policy documents, 30 fictional transcript snippets, simulated history
 prompts/     router, grounding and handoff prompts
 src/         control, router, identity, actions, grounding, handoff, telemetry, agent, API, export
 eval/        routing set, golden set, release check

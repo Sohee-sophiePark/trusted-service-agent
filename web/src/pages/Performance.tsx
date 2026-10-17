@@ -10,23 +10,25 @@ const endLabel = (name: string, n: number) => (p: { x?: number | string; y?: num
   p.index === n - 1 ? <text x={Number(p.x) + 6} y={Number(p.y) + 4} fill="#E6E8EB" fontSize={10}>{name}</text> : null;
 const LINE = { strokeWidth: 2, dot: { r: 4, strokeWidth: 2, stroke: "#1C1F26" }, activeDot: { r: 6 }, isAnimationActive: false } as const;
 
-const TODAY_KICKER = import.meta.env.VITE_STATIC ? "recorded demo session · this system's own telemetry, not simulated" : "live telemetry · today · not simulated";
+const STATIC = !!import.meta.env.VITE_STATIC;
+const TODAY_TITLE = STATIC ? "Recorded demo run" : "Event log totals";
+const TODAY_KICKER = STATIC ? "demo questions replayed at build time · this system's own telemetry, not simulated" : "every turn in this system's event log · not simulated";
 
 function TodayStrip({ t }: { t: Today }) {
   const cells: [string, string][] = [
-    ["Contacts", String(t.contacts)],
-    ["Agent-handled", String(t.agent_contacts)],
+    ["Customer turns", String(t.contacts)],
+    ["Handled by the agent", String(t.agent_contacts)],
     ["Resolved", String(t.resolved)],
-    ["Handoffs (never-do)", `${t.handoffs} (${t.never_do_handoffs})`],
+    ["Handoffs (of which never-do)", `${t.handoffs} (${t.never_do_handoffs})`],
     ["Escalation rate", t.escalation_rate == null ? "—" : pct(t.escalation_rate)],
-    ["To humans by control", String(t.to_humans_by_control)],
+    ["To human agents by the control plane", String(t.to_humans_by_control)],
     ["Model calls", String(t.model_calls)],
   ];
   return (
-    <Panel title="Today" kicker={TODAY_KICKER}>
-      <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs md:grid-cols-4 xl:grid-cols-7">
+    <Panel title={TODAY_TITLE} kicker={TODAY_KICKER}>
+      <dl className="grid grid-cols-3 gap-x-4 gap-y-2 text-xs md:grid-cols-4 xl:grid-cols-7">
         {cells.map(([k, v]) => (
-          <div key={k}><dt className="text-muted">{k}</dt><dd className="num text-lg font-semibold text-ink">{v}</dd></div>
+          <div key={k} className="flex flex-col justify-between"><dt className="text-muted">{k}</dt><dd className="num text-xl font-semibold text-signal">{v}</dd></div>
         ))}
       </dl>
     </Panel>
@@ -41,7 +43,7 @@ function Tiles({ d }: { d: Dashboard }) {
     { k: "Verified resolution", v: pct(last.vrr), sub: "absolute · target 30%", ok: last.vrr >= 0.3 },
     { k: "Cost per resolved contact", v: money(cprc.agent), sub: `vs control ${money(cprc.control)} (${signedPct(cprc.agent / cprc.control - 1)})`, ok: cprc.agent < cprc.control },
     { k: "CSAT (% scoring 4–5)", v: pct(last.csat_agent), sub: `vs control ${pct(last.csat_control)}`, ok: last.csat_agent >= last.csat_control },
-    { k: "Escalation rate", v: pct(last.escalation_rate), sub: "handoffs ÷ agent contacts", ok: true },
+    { k: "Escalation rate", v: pct(last.escalation_rate), sub: "handoffs ÷ agent contacts · no limit set", ok: true },
     { k: "False containment", v: pct(last.false_containment, 1), sub: "kept what it should have escalated · max 2%", ok: last.false_containment <= 0.02 },
     { k: "Compliance incidents", v: String(incidents), sub: "absolute · one → operator pauses via kill switch", ok: incidents === 0 },
   ];
@@ -49,8 +51,8 @@ function Tiles({ d }: { d: Dashboard }) {
     <section aria-label="Key measures" className="grid grid-cols-2 gap-2 md:grid-cols-3 xl:grid-cols-6">
       {tiles.map((t) => (
         <div key={t.k} className="rounded-lg border border-line bg-panel p-3">
-          <div className="flex items-start justify-between gap-1"><span className="text-xs text-muted">{t.k}</span><Light ok={t.ok} label={t.ok ? "on track" : "watch"} /></div>
-          <div className="num mt-1 text-2xl font-semibold text-signal">{t.v}</div>
+          <div className="flex flex-wrap items-start justify-between gap-x-1 gap-y-0.5"><span className="text-xs text-muted">{t.k}</span><Light ok={t.ok} label={t.ok ? "on track" : "watch"} /></div>
+          <div className="num mt-1 text-2xl font-semibold text-ink">{t.v}</div>
           <div className="mt-0.5 text-[11px] text-muted">{t.sub}</div>
         </div>
       ))}
@@ -129,7 +131,7 @@ function Guardrails({ d }: { d: Dashboard }) {
         {small("false_containment", "False containment (≤ 2%)", 0.02, [0, 0.03], [0, 0.01, 0.02, 0.03], 1)}
       </div>
       <p className="mt-3 text-xs text-muted">
-        Escalation handle time <span className="num text-ink">{signedPct(last.escalation_handle_time_delta)}</span> vs today ·
+        Escalation handle time <span className="num text-ink">{signedPct(last.escalation_handle_time_delta)}</span> vs the pre-go-live baseline ·
         compliance incidents <span className="num text-ink">{incidents}</span> (any incident: operator pauses via the kill switch) · week 6 dip: new plan prices were missing from the index, re-indexed in week 7.
       </p>
     </Panel>
@@ -160,7 +162,7 @@ export default function Performance({ d }: { d: Dashboard }) {
   return (
     <div className="space-y-3">
       <TodayStrip t={d.today} />
-      <p className="text-xs text-muted">{d.ops.label}</p>
+      <p className="border-t border-line pt-3 text-xs text-muted">{d.ops.label}</p>
       <Tiles d={d} />
       <Trends d={d} />
       <div className="grid gap-3 xl:grid-cols-2"><Guardrails d={d} /><Intents d={d} /></div>
