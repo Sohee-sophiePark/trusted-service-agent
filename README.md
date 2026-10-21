@@ -46,7 +46,7 @@ every turn ─► event log ─► operator console
 | Rule | How |
 |---|---|
 | Control plane first | Read before routing on every turn; the kill switch makes zero model calls (tested) |
-| No citation, no answer | The quoted sentence must appear verbatim in the cited policy section, or the agent hands off |
+| No citation, no answer | The quoted sentence must appear verbatim in the cited policy section, and every number in the answer must appear in the retrieved policy text, or the agent hands off |
 | Read-only | There is no write path: a test fails on any `INSERT/UPDATE/DELETE/CREATE/DROP/ALTER/MERGE` in `src/`; the warehouse opens read-only |
 | Identity before account data | Lookups raise without a verified session (account number + service-address postal code) |
 | Transcripts never answer customers | Used only to find contact reasons and build test sets; a test asserts no file in `src/` references them |
@@ -55,8 +55,9 @@ every turn ─► event log ─► operator console
 
 ## The never-do list
 
-Risk draws the line: **R**egulatory · **M**oney · **V**ulnerable · **P**ublicity. Signals are matched in code before
-any model call, and any hit hands off (`config/out_of_scope.yaml`).
+Risk draws the line: **R**egulatory · **M**oney · **V**ulnerable · **P**ublicity. Signals are matched in code on word
+boundaries before any model call, and any hit hands off (`config/out_of_scope.yaml`); the model is used only afterwards,
+to write the handoff summary.
 
 | Case | Queue |
 |---|---|
@@ -97,9 +98,10 @@ Every change must pass `make eval` before release: the automated thresholds of t
 | Routing accuracy (42 cases) | 97.6% | ≥ 92% |
 | Escalation precision / recall | 100% / 100% | — |
 | Golden-set accuracy (30 cases: answer + exact source) | 100% | ≥ 90% |
-| Groundedness / citation accuracy | 100% / 100% | ≥ 95% / — |
+| Groundedness (quote verbatim and every number in the policy text) / citation accuracy | 100% / 100% | ≥ 95% / — |
 
-The one routing miss ("can I get a paper bill" sent to account questions) is kept as found. Demo sets are small;
+The one routing miss ("can I get a paper bill" sent to account questions) is kept as found. False containment is
+measured over the cases that should hand off. Demo sets are small;
 production would use a larger set signed off by subject-matter experts. Models: free-tier Gemini, newest first with fallback on quota,
 overload or timeout; the model that served each call is recorded.
 

@@ -353,210 +353,240 @@
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "when does a late payment charge apply",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "is there a grace period for late payments",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "can I set up a payment arrangement",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "when is my bill payment due",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "how can I pay my bill",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "how long does an online banking payment take",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "can I get a paper bill",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "when does my bill cycle start",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "what is a prorated charge",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "why can the bill after a plan change be higher",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "how is proration calculated",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "how much data does the Essential plan have",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "how much is the Unlimited plan",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "what happens when I use all my data on Plus",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "are there overage charges for data",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "how fast is home internet",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "do I have to return the modem",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "is there a discount for mobile and internet together",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "how much is roaming in the US",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "how much does Travel Pass cost in Europe",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "is there a cap on Travel Pass charges",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "does wifi calling abroad trigger Travel Pass",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "do I get a credit for an outage",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "do I need to ask for an outage credit",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "how often are outage estimates updated",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "what are the appointment windows",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "what does on hold mean for a ticket",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "how soon is a repair scheduled for a full outage",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   },
   {
    "q": "what do I need to verify my identity",
    "answered": true,
    "source_ok": true,
    "facts_ok": true,
-   "quote_verified": true
+   "drafted": true,
+   "grounded": true
   }
  ],
  "gate": {

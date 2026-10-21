@@ -31,6 +31,7 @@ secrets/
 
 # ── Internal material — never commit ────────────────────────────────────────
 INTERNAL.md
+DEMO_RUNBOOK.md
 CLAUDE.md
 **/CLAUDE.md
 .claude/

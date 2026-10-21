@@ -107,11 +107,14 @@ async def _turn(
         )
     if r.topic == "account_questions":
         s = actions.account_summary(wh, session)
-        b = s["latest_bill"]
+        b, p = s["latest_bill"], s["last_payment"]
         ans = (
-            f"Your plan is {s['plan']['plan']}. Your latest bill of ${b['total']} was issued "
-            f"{b['issued']:%b %d} and is due {b['due']:%b %d}; balance due ${s['balance_due']:.2f}."
+            f"Your plan is {s['plan']['plan']}, autopay {'on' if s['plan']['autopay'] else 'off'}. "
+            f"Your latest bill of ${b['total']} was issued {b['issued']:%b %d} and is due "
+            f"{b['due']:%b %d}; balance due ${s['balance_due']:.2f}."
         )
+        if p:
+            ans += f" Your last payment of ${p['amount']} was received {p['paid_on']:%b %d}."
         return Turn("resolved", r.topic, ans, data=s)
     wanted = m.group(0) if (m := re.search(r"\b\d{5}\b", text)) else None
     tickets, outs = actions.ticket_status(wh, session, wanted), actions.outages(wh, session)

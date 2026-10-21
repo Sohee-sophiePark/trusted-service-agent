@@ -1,27 +1,28 @@
 # Risk draws the line. RMVP: regulatory, money, vulnerable, publicity.
-# Signals are checked by code before any model call; any hit hands off.
+# Signals are regular expressions, matched by code on word boundaries (curly quotes normalised) before any model call;
+# any hit hands off. The handoff summary is written by the model afterwards.
 out_of_scope:
   - id: dispute
     label: "Billing dispute or charge the customer did not make"
     risk: [regulatory, money]
     handoff_queue: disputes
-    signals: ["dispute", "didn't make", "did not make", "don't recognise", "don't recognize", "not my charge", "overcharged", "chargeback", "fraudulent charge", "refund for"]
+    signals: ["dispute", "didn't make", "did not make", "don't recogni[sz]e", "do not recogni[sz]e", "not my charge", "overcharged", "charged twice", "double charged", "chargeback", "fraudulent charge", "unauthori[sz]ed charge", "didn't authori[sz]e", "did not authori[sz]e", "refund for", "money back"]
   - id: complaint
     label: "Formal complaint"
     risk: [regulatory, publicity]
     handoff_queue: complaints
-    signals: ["complaint", "complain", "ombudsman", "ccts", "escalate this", "speak to a manager", "unacceptable", "going to the media"]
+    signals: ["complaint", "complain", "ombudsman", "ccts", "escalate this", "speak to a manager", "unacceptable", "going to the media", "not happy with", "unhappy with", "dissatisfied", "poor service"]
   - id: account_change
     label: "Any change to the account, plan, payment or service"
     risk: [money]
     handoff_queue: servicing
-    signals: ["cancel", "change my plan", "switch my plan", "upgrade", "downgrade", "update my address", "change my address", "change my payment", "add a line", "remove a line", "port my number", "waive", "credit my account"]
+    signals: ["cancel (my |the |our )?(home |mobile |phone )?(internet|plan|service|account|line|contract|subscription|phone)", "close my account", "change my plan", "switch my plan", "upgrade", "downgrade", "update my address", "change my address", "change my payment", "add a line", "remove a line", "port my number", "waive", "credit my account"]
   - id: vulnerable
     label: "Bereavement, hardship, distress or confusion"
     risk: [vulnerable, publicity]
     handoff_queue: specialist
     detection_note: "Err toward handoff. False containment here is the worst failure."
-    signals: ["passed away", "died", "death", "funeral", "bereave", "widow", "lost my job", "can't afford", "cannot afford", "hardship", "struggling to pay", "behind on", "scared", "desperate", "don't understand anything", "confused", "hospital", "elderly", "my mother", "my father"]
+    signals: ["passed away", "passed", "died", "death", "funeral", "bereave\\w*", "widow\\w*", "lost my job", "can't afford", "cannot afford", "hardship", "struggling to pay", "behind on", "scared", "desperate", "don't understand anything", "confused", "hospital", "elderly"]
   - id: advice
     label: "Plan-suitability or financial advice"
     risk: [regulatory]
@@ -31,4 +32,4 @@ out_of_scope:
     label: "Instructions aimed at the agent instead of a service request"
     risk: [publicity]
     handoff_queue: servicing
-    signals: ["ignore previous", "ignore all previous", "ignore your instructions", "system prompt", "you are now", "developer mode", "reveal your", "act as"]
+    signals: ["ignore (all )?(the |your )?(previous|above|prior|earlier)", "ignore everything", "ignore your instructions", "disregard (the|your|all)", "system prompt", "you are now", "pretend you", "developer mode", "reveal your", "act as"]

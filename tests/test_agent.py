@@ -170,6 +170,38 @@ async def test_unverifiable_quote_hands_off(tmp_path, wh, gw, scripted):
     assert (t.outcome, t.card.reason) == ("handoff", "no_citation")
 
 
+async def test_invented_number_hands_off(tmp_path, wh, gw, scripted):
+    scripted.add("router", reply(destination="product_guidance", confidence=0.9))
+    scripted.add(
+        "writer",
+        reply(
+            supported=True,
+            answer="It is 2% of the overdue balance, up to $40.",
+            quote="The late payment charge is 2% of the overdue balance, with a "
+            "minimum of $5 and a maximum of $25 per bill.",
+            section_id="policies/late-fees.md#amount",
+        ),
+        reply(
+            customer_goal="Know the late fee",
+            already_done=[],
+            open_question="Fee amount",
+            sentiment="calm",
+            vulnerability_flag=False,
+            do_not_repeat=[],
+        ),
+    )
+    t = await agent.turn(
+        "c5b",
+        "how much is the late payment fee",
+        Session(),
+        wh,
+        gw,
+        ctl(tmp_path),
+        tmp_path / "t.jsonl",
+    )
+    assert (t.outcome, t.card.reason) == ("handoff", "no_citation")
+
+
 async def test_topic_toggled_off_routes_to_a_human(tmp_path, wh, gw, scripted):
     scripted.add("router", reply(destination="product_guidance", confidence=0.9))
     scripted.add(

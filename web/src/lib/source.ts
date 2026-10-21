@@ -11,6 +11,8 @@ export interface Source {
   queue(): Promise<QueuedCard[]>;
   recent(): Promise<Recent[]>;
   demoAccount(): Promise<{ account: string; postal: string } | null>;
+  /** Public demo only: forget this browser's clicks (control plane, queue, session log). */
+  reset(): void;
 }
 
 const json = async (url: string, init?: RequestInit) => {
@@ -34,6 +36,7 @@ export const liveSource: Source = {
   queue: () => json("/api/queue"),
   recent: () => json("/api/recent"),
   demoAccount: async () => null,
+  reset: () => {},
 };
 
 interface StaticData { dashboard: Dashboard; turns: Record<string, Turn>; control: Control; accounts: { account: string; postal: string; overview: Overview } }
@@ -78,6 +81,7 @@ export const staticSource: Source = {
   queue: async () => read(KEY.queue, []),
   recent: async () => read(KEY.recent, []),
   demoAccount: async () => (await load()).accounts,
+  reset: () => { Object.values(KEY).forEach((k) => localStorage.removeItem(k)); },
 };
 
 export const source: Source = import.meta.env.VITE_STATIC ? staticSource : liveSource;

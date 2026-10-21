@@ -23,6 +23,7 @@ export default function ConsoleApp() {
         <div className="flex items-center gap-2">
           <a href="../" target="_blank" className="rounded border border-line px-2 py-1 text-xs text-muted hover:text-ink">Open customer chat ↗</a>
           <span className="px-2 py-1 font-mono text-xs text-muted">{source.live ? "● LIVE · laptop" : "◐ REPLAY · public demo"}</span>
+          {!source.live && <button onClick={() => { source.reset(); window.location.reload(); }} className="rounded border border-line px-2 py-1 text-xs text-muted hover:text-ink">Reset demo</button>}
         </div>
       </header>
       <nav className="mb-3 flex gap-1" aria-label="Sections">

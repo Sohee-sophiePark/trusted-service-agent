@@ -8,7 +8,7 @@ from pathlib import Path
 import duckdb
 
 ROOT = Path(__file__).resolve().parent
-AS_OF = date(2026, 10, 14)
+AS_OF = date(2026, 10, 26)
 
 FIRST = [
     "Ava",
@@ -94,6 +94,12 @@ CREATE TABLE servicing.contact_baseline (contact_reason VARCHAR, topic VARCHAR, 
 """
 
 
+def cycle_date(d: date, cycle: int, months_back: int) -> date:
+    """The bill date `months_back` months before the latest cycle day on or before `d`."""
+    m = d.year * 12 + d.month - 1 - (cycle > d.day) - months_back
+    return date(m // 12, m % 12 + 1, cycle)
+
+
 def build(path: Path) -> None:
     """Recreate the warehouse at `path` from the fixed seed."""
     rng = random.Random(18)
@@ -120,9 +126,7 @@ def build(path: Path) -> None:
             [acct, cid, plan, PLANS[plan], cycle, rng.random() < 0.6],
         )
         for k, months_back in enumerate([1, 0]):
-            issued = date(2026, 10 - months_back, cycle)
-            if issued > AS_OF:
-                issued = date(2026, 9 - months_back, cycle)
+            issued = cycle_date(AS_OF, cycle, months_back)
             total = PLANS[plan] * 1.13
             bill_id = f"B-{acct}-{k}"
             lines = [
@@ -151,7 +155,7 @@ def build(path: Path) -> None:
                     "INSERT INTO servicing.payment VALUES (?,?,?,?)",
                     [
                         acct,
-                        issued + timedelta(days=rng.randint(3, 20)),
+                        min(issued + timedelta(days=rng.randint(3, 20)), AS_OF),
                         round(total, 2),
                         rng.choice(["pre-authorized debit", "credit card", "online banking"]),
                     ],
@@ -186,10 +190,12 @@ def build(path: Path) -> None:
             ],
         )
     con.execute(
-        "INSERT INTO servicing.outage_event VALUES ('OUT-2291','M4C','home internet','2026-10-14 06:10:00','2026-10-14 15:00:00','active')"
+        "INSERT INTO servicing.outage_event VALUES ('OUT-2291','M4C','home internet',?,?,'active')",
+        [f"{AS_OF} 06:10:00", f"{AS_OF} 15:00:00"],
     )
     con.execute(
-        "INSERT INTO servicing.outage_event VALUES ('OUT-2284','K1P','mobile','2026-10-12 21:00:00','2026-10-13 02:00:00','resolved')"
+        "INSERT INTO servicing.outage_event VALUES ('OUT-2284','K1P','mobile',?,?,'resolved')",
+        [f"{AS_OF - timedelta(days=2)} 21:00:00", f"{AS_OF - timedelta(days=1)} 02:00:00"],
     )
     con.executemany("INSERT INTO servicing.contact_baseline VALUES (?,?,?,?,?,?,?)", BASELINE)
     con.close()

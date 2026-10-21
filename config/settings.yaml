@@ -13,5 +13,5 @@ rate_limits:                     # conservative placeholders, below free-tier li
 retry: {max_attempts: 2, base_seconds: 2.0, cap_seconds: 10.0, max_wait_seconds: 30}   # fail fast to the next model
 timeout_seconds: 30
 paths: {cassettes: cassettes}
-demo_now: 2026-10-14T10:30:00          # fixed clock for the fictional data (status freshness)
+demo_now: 2026-10-26T10:30:00          # fixed clock for the fictional data (status freshness)
 stale_after_minutes: 60               # policies/install-repair.md#updates

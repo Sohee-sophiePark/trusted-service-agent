@@ -13,7 +13,7 @@ export interface EvalReport {
   golden_set_accuracy: number; groundedness: number; citation_accuracy: number; answered_share: number;
   routing_cases: number; golden_cases: number; gate: Record<string, boolean>; pass: boolean;
   routing_rows: { q: string; expect: string; got: string; ok: boolean }[];
-  golden_rows: { q: string; answered: boolean; source_ok: boolean; facts_ok: boolean; quote_verified: boolean }[];
+  golden_rows: { q: string; answered: boolean; source_ok: boolean; facts_ok: boolean; drafted: boolean; grounded: boolean }[];
 }
 export interface Today {
   contacts: number; agent_contacts: number; resolved: number; handoffs: number; never_do_handoffs: number;

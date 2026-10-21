@@ -1,4 +1,4 @@
-"""Answers only from approved policy sections: BM25 retrieval, then a quote checked by code."""
+"""Answers only from approved policy sections: BM25 retrieval; code checks quote and numbers."""
 
 import re
 from dataclasses import dataclass
@@ -86,20 +86,42 @@ def retrieve(question: str, k: int = 3) -> list[Section]:
     return [s for score, s in ranked[:k] if score > 0]
 
 
+NUMBER = re.compile(r"\d[\d,]*(?:\.\d+)?")
+
+
 def verified(quote: str, section: Section) -> bool:
     """The quote must appear word for word in the cited section (whitespace-insensitive)."""
     return bool(quote.strip()) and " ".join(quote.split()) in " ".join(section.text.split())
 
 
-async def answer(question: str, gw: Gateway) -> Grounded | None:
-    """A cited answer, or None when no approved source supports it (the caller hands off)."""
+def numbers_supported(answer: str, sections: list[Section]) -> bool:
+    """Every number in the answer must appear in the retrieved sections; none may be invented."""
+    have = {n for s in sections for n in NUMBER.findall(s.text)}
+    return all(n in have for n in NUMBER.findall(answer))
+
+
+async def draft(question: str, gw: Gateway) -> tuple[Draft, list[Section]] | None:
+    """The model's draft and the retrieved sections, before the code gate; None if none found."""
     found = retrieve(question)
     if not found:
         return None
     context = "\n\n".join(f'<section id="{s.id}">\n{s.text}\n</section>' for s in found)
     system = (ROOT / "prompts" / "grounding.md").read_text(encoding="utf-8")
-    d = await gw.ask("writer", system, f"<question>{question}</question>\n{context}", Draft)
+    return await gw.ask(
+        "writer", system, f"<question>{question}</question>\n{context}", Draft
+    ), found
+
+
+def gate(d: Draft, found: list[Section]) -> Grounded | None:
+    """Code decides: cited section among those retrieved, quote verbatim, every number supported."""
     cited = next((s for s in found if s.id == d.section_id), None)
     if not d.supported or cited is None or not verified(d.quote, cited):
         return None
+    if not numbers_supported(d.answer, found):
+        return None
     return Grounded(d.answer, d.quote, cited)
+
+
+async def answer(question: str, gw: Gateway) -> Grounded | None:
+    """A cited answer, or None when no approved source supports it (the caller hands off)."""
+    return gate(*dr) if (dr := await draft(question, gw)) else None

@@ -2,6 +2,7 @@
 
 import asyncio
 import json
+import re
 import sys
 
 import yaml
@@ -52,7 +53,9 @@ async def score(gw: Gateway) -> dict:
     tp = sum(x["expect_handoff"] and x["got_handoff"] for x in rows)
     answers = []
     for c in golden:
-        g = await grounding.answer(c["q"], gw)
+        dr = await grounding.draft(c["q"], gw)
+        g = grounding.gate(*dr) if dr else None
+        cited = next((s for s in dr[1] if s.id == dr[0].section_id), None) if dr else None
         text = g.answer if g else ""
         answers.append(
             {
@@ -61,22 +64,26 @@ async def score(gw: Gateway) -> dict:
                 "source_ok": bool(g) and g.section.id == c["expect_source"],
                 "facts_ok": bool(g)
                 and all(
-                    any(alt in text.lower() for alt in f.lower().split("|"))
-                    for f in c["must_include"]
+                    any(_has(text, alt) for alt in f.lower().split("|")) for f in c["must_include"]
                 ),
-                "quote_verified": bool(g) and grounding.verified(g.quote, g.section),
+                "drafted": bool(cited) and dr[0].supported,
+                "grounded": bool(cited)
+                and grounding.verified(dr[0].quote, cited)
+                and grounding.numbers_supported(dr[0].answer, dr[1]),
             }
         )
     answered = [a for a in answers if a["answered"]]
+    drafted = [a for a in answers if a["drafted"]]
     n_ans = max(len(answered), 1)
     return {
-        "false_containment_rate": kept_should_escalate / len(rows),
+        "false_containment_rate": kept_should_escalate
+        / max(sum(x["expect_handoff"] for x in rows), 1),
         "routing_accuracy": sum(x["ok"] for x in rows) / len(rows),
         "escalation_precision": tp / max(sum(x["got_handoff"] for x in rows), 1),
         "escalation_recall": tp / max(sum(x["expect_handoff"] for x in rows), 1),
         "golden_set_accuracy": sum(a["source_ok"] and a["facts_ok"] for a in answers)
         / len(answers),
-        "groundedness": sum(a["quote_verified"] for a in answered) / n_ans,
+        "groundedness": sum(a["grounded"] for a in drafted) / max(len(drafted), 1),
         "citation_accuracy": sum(a["source_ok"] for a in answered) / n_ans,
         "answered_share": len(answered) / len(answers),
         "routing_cases": len(rows),
@@ -84,6 +91,11 @@ async def score(gw: Gateway) -> dict:
         "routing_rows": rows,
         "golden_rows": answers,
     }
+
+
+def _has(text: str, fact: str) -> bool:
+    """Fact present on token boundaries, so "$2" does not match "$25"."""
+    return re.search(rf"(?<![\w$.]){re.escape(fact)}(?![\d%])", text.lower()) is not None
 
 
 def gate(m: dict) -> dict:

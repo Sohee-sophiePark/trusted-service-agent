@@ -1,5 +1,6 @@
 """Route a message: never-do signals in code first (no model call), then the model picks a topic."""
 
+import re
 from dataclasses import dataclass
 from functools import lru_cache
 from typing import Literal
@@ -33,10 +34,19 @@ def never_do() -> list[dict]:
     ]
 
 
+QUOTES = str.maketrans({"\u2019": "'", "\u2018": "'", "\u201c": '"', "\u201d": '"'})
+
+
+@lru_cache
+def patterns() -> list[tuple[dict, re.Pattern]]:
+    """Signals are regular expressions matched on word boundaries."""
+    return [(e, re.compile("|".join(rf"\b(?:{s})\b" for s in e["signals"]))) for e in never_do()]
+
+
 def rule_hit(text: str) -> dict | None:
-    """First never-do entry with a signal in the message; any hit hands off."""
-    low = " ".join(text.lower().split())
-    return next((e for e in never_do() if any(s in low for s in e["signals"])), None)
+    """First never-do entry with a signal in the message (quotes normalised); any hit hands off."""
+    low = " ".join(text.lower().translate(QUOTES).split())
+    return next((e for e, p in patterns() if p.search(low)), None)
 
 
 async def route(text: str, gw: Gateway) -> Route:

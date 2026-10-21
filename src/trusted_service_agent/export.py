@@ -3,6 +3,7 @@
 import asyncio
 import json
 import re
+import sys
 import tempfile
 from dataclasses import asdict
 from pathlib import Path
@@ -89,6 +90,9 @@ def main() -> None:
     with tempfile.TemporaryDirectory() as d:
         recorded, postal = asyncio.run(turns(wh, gw, Path(d)))
         today = metrics.today(Path(d) / "telemetry.jsonl")
+    errors = [k for k, v in recorded.items() if v["card"] and v["card"]["reason"] == "agent_error"]
+    if errors:
+        sys.exit(f"export failed: {len(errors)} turn(s) errored (missing recording?): {errors[:3]}")
     board = json.loads(json.dumps(dashboard(), default=str)) | {"today": today}
     control = yaml.safe_load((ROOT / "config" / "control.yaml").read_text())
     OUT.parent.mkdir(parents=True, exist_ok=True)
