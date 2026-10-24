@@ -35,28 +35,42 @@ function TodayStrip({ t }: { t: Today }) {
   );
 }
 
+function Tile({ k, v, sub, ok, big }: { k: string; v: string; sub: string; ok: boolean; big?: boolean }) {
+  return (
+    <div className="rounded-lg border border-line bg-panel p-3">
+      <div className="flex flex-wrap items-start justify-between gap-x-1 gap-y-0.5"><span className={big ? "text-sm font-semibold" : "text-xs text-muted"}>{k}</span><Light ok={ok} label={ok ? "on track" : "watch"} /></div>
+      <div className={`num mt-1 font-semibold text-ink ${big ? "text-4xl" : "text-2xl"}`}>{v}</div>
+      <div className="mt-0.5 text-xs text-muted">{sub}</div>
+    </div>
+  );
+}
+
 function Tiles({ d }: { d: Dashboard }) {
   const last = d.ops.weekly.at(-1) as Week;
   const cprc = d.ops.cprc_monthly.at(-1)!;
   const incidents = d.ops.weekly.reduce((a, w) => a + w.compliance_incidents, 0);
-  const tiles: { k: string; v: string; sub: string; ok: boolean }[] = [
-    { k: "Verified resolution", v: pct(last.vrr), sub: "absolute · target 30%", ok: last.vrr >= 0.3 },
-    { k: "Cost per resolved contact", v: money(cprc.agent), sub: `vs control ${money(cprc.control)} (${signedPct(cprc.agent / cprc.control - 1)})`, ok: cprc.agent < cprc.control },
-    { k: "CSAT (% scoring 4–5)", v: pct(last.csat_agent), sub: `vs control ${pct(last.csat_control)}`, ok: last.csat_agent >= last.csat_control },
-    { k: "Escalation rate", v: pct(last.escalation_rate), sub: "handoffs ÷ agent contacts · no limit set", ok: true },
-    { k: "False containment", v: pct(last.false_containment, 1), sub: "kept what it should have escalated · max 2%", ok: last.false_containment <= 0.02 },
-    { k: "Compliance incidents", v: String(incidents), sub: "absolute · one → operator pauses via kill switch", ok: incidents === 0 },
+  const kpis = [
+    { k: "Resolution rate", v: pct(last.vrr), sub: "no handoff, no repeat in 7 days · target 30%", ok: last.vrr >= 0.3 },
+    { k: "Cost per resolved contact", v: money(cprc.agent), sub: `vs people-only group ${money(cprc.control)} (${signedPct(cprc.agent / cprc.control - 1)})`, ok: cprc.agent < cprc.control },
+    { k: "CSAT (% scoring 4–5)", v: pct(last.csat_agent), sub: `vs people-only group ${pct(last.csat_control)}`, ok: last.csat_agent >= last.csat_control },
+  ];
+  const guards = [
+    { k: "False containment", v: pct(last.false_containment, 1), sub: "kept what it should have handed off · max 2%", ok: last.false_containment <= 0.02 },
+    { k: "Compliance incidents", v: String(incidents), sub: "must be 0 · one pauses the rollout", ok: incidents === 0 },
+    { k: "Sampled accuracy", v: pct(last.sampled_accuracy), sub: "weekly review · min 95%", ok: last.sampled_accuracy >= 0.95 },
+    { k: "Hand-off handling time", v: signedPct(last.escalation_handle_time_delta), sub: "vs before go-live · no worse than 0%", ok: last.escalation_handle_time_delta <= 0 },
   ];
   return (
-    <section aria-label="Key measures" className="grid grid-cols-2 gap-2 md:grid-cols-3 xl:grid-cols-6">
-      {tiles.map((t) => (
-        <div key={t.k} className="rounded-lg border border-line bg-panel p-3">
-          <div className="flex flex-wrap items-start justify-between gap-x-1 gap-y-0.5"><span className="text-xs text-muted">{t.k}</span><Light ok={t.ok} label={t.ok ? "on track" : "watch"} /></div>
-          <div className="num mt-1 text-2xl font-semibold text-ink">{t.v}</div>
-          <div className="mt-0.5 text-[11px] text-muted">{t.sub}</div>
-        </div>
-      ))}
-    </section>
+    <>
+      <section aria-label="Three KPIs">
+        <h2 className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-muted">The three KPIs · against the baseline</h2>
+        <div className="grid gap-2 md:grid-cols-3">{kpis.map((t) => <Tile key={t.k} {...t} big />)}</div>
+      </section>
+      <section aria-label="Guardrails">
+        <h2 className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-muted">Guardrails · must hold</h2>
+        <div className="grid grid-cols-2 gap-2 md:grid-cols-4">{guards.map((t) => <Tile key={t.k} {...t} />)}</div>
+      </section>
+    </>
   );
 }
 
@@ -161,11 +175,11 @@ function Intents({ d }: { d: Dashboard }) {
 export default function Performance({ d }: { d: Dashboard }) {
   return (
     <div className="space-y-3">
-      <TodayStrip t={d.today} />
-      <p className="border-t border-line pt-3 text-xs text-muted">{d.ops.label}</p>
+      <p className="text-xs text-muted">{d.ops.label}</p>
       <Tiles d={d} />
       <Trends d={d} />
       <div className="grid gap-3 xl:grid-cols-2"><Guardrails d={d} /><Intents d={d} /></div>
+      <TodayStrip t={d.today} />
     </div>
   );
 }

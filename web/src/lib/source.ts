@@ -47,7 +47,7 @@ const norm = (t: string) => t.toLowerCase().replace(/[^a-z0-9 ]/g, "").replace(/
 export const turnKey = (text: string, guidance: boolean, verified: boolean) => `${norm(text)}|pg:${guidance ? 1 : 0}|v:${verified ? 1 : 0}`;
 
 /** Browser storage shared by the customer page and the console (public demo only). */
-const KEY = { control: "tsa.control", queue: "tsa.queue", recent: "tsa.recent" };
+const KEY = { control: "tsa.control", queue: "tsa.queue", recent: "tsa.recent", csat: "tsa.csat" };
 const read = <T,>(k: string, fallback: T): T => JSON.parse(localStorage.getItem(k) ?? "null") ?? fallback;
 const push = <T,>(k: string, item: T) => localStorage.setItem(k, JSON.stringify([item, ...read<T[]>(k, [])].slice(0, 50)));
 
@@ -83,5 +83,9 @@ export const staticSource: Source = {
   demoAccount: async () => (await load()).accounts,
   reset: () => { Object.values(KEY).forEach((k) => localStorage.removeItem(k)); },
 };
+
+/** End-of-contact survey (1–5), kept in this browser for the demo session in both modes. */
+export const survey = (score: number) => push(KEY.csat, { ts: new Date().toISOString(), score });
+export const surveys = (): { ts: string; score: number }[] => read(KEY.csat, []);
 
 export const source: Source = import.meta.env.VITE_STATIC ? staticSource : liveSource;

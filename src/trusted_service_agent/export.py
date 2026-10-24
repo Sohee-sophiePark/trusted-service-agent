@@ -25,6 +25,8 @@ CASSETTE = ROOT / "cassettes" / "demo.jsonl"
 DEMO_ACCOUNT = "TS-100201"
 EXAMPLES = [
     "what's the status of ticket 44812",
+    "where is my installation",
+    "I want to make a formal complaint about my service",
     "how much is the late payment fee",
     "there's a charge on my bill I didn't make, I want a refund",
     "my mother died last week, what happens to her phone",

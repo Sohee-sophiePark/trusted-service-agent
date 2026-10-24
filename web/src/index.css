@@ -33,10 +33,12 @@ body { background: var(--color-bg); color: var(--color-ink); font-family: var(--
   --color-c-bg: #FFFFFF;
   --color-c-ink: #1A1C20;
   --color-c-muted: #5B6270;
-  --color-c-soft: #F3F4F6;
+  --color-c-soft: #EEF4F3;
   --color-c-line: #D5D8DE;
   --color-c-field: #8C929C;
-  --color-c-brand: #8A5A00;
+  --color-c-brand: #0F6E6E;
+  --color-c-primary: #0F6E6E;
+  --color-c-primary-dark: #0B5555;
 }
 body.customer { background: var(--color-c-bg); color: var(--color-c-ink); color-scheme: light; }
-body.customer :focus-visible { outline-color: #8A5A00; }
+body.customer :focus-visible { outline-color: #0F6E6E; }

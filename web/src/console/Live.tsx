@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Light, Panel } from "../components/Status";
 import { QUEUE_LABEL, REASON_LABEL, pct } from "../lib/format";
-import { source } from "../lib/source";
+import { source, surveys } from "../lib/source";
 import type { Control, QueuedCard, Recent } from "../lib/types";
 
 export const TOPIC_LABEL: Record<string, string> = { account_questions: "Account questions", ticket_status: "Ticket & outage status", product_guidance: "Product guidance" };
@@ -79,15 +79,16 @@ function Queue({ cards }: { cards: QueuedCard[] }) {
   );
 }
 
-function RecentTurns({ rows }: { rows: Recent[] }) {
+function RecentTurns({ rows, csat }: { rows: Recent[]; csat: { score: number }[] }) {
   const agent = rows.filter((r) => r.reason !== "kill_switch" && r.reason !== "traffic_share");
   const tiles = [
     ["Customer turns", String(rows.length)], ["Resolved by the agent", String(agent.filter((r) => r.outcome === "resolved").length)],
     ["Handed to human agents", String(rows.filter((r) => r.outcome === "handoff").length)], ["Model calls", String(rows.reduce((a, r) => a + r.model_calls, 0))],
+    ["CSAT (4–5)", csat.length ? `${Math.round((100 * csat.filter((c) => c.score >= 4).length) / csat.length)}% of ${csat.length}` : "—"],
   ];
   return (
     <Panel title={source.live ? "Recent turns" : "Your demo session"} kicker={`${source.live ? "last 50 turns from the event log" : "your clicks in this browser only"} · refusals count as successes`}>
-      <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2 md:grid-cols-5">
         {tiles.map(([k, v]) => <div key={k} className="rounded border border-line p-2"><div className="text-xs text-muted">{k}</div><div className="num text-xl font-semibold text-signal">{v}</div></div>)}
       </div>
       <table className="mt-3 w-full text-xs">
@@ -111,8 +112,9 @@ export default function Live() {
   const [ctl, setCtl] = useState<Control | null>(null);
   const [cards, setCards] = useState<QueuedCard[]>([]);
   const [rows, setRows] = useState<Recent[]>([]);
+  const [csat, setCsat] = useState<{ score: number }[]>([]);
   useEffect(() => {
-    const refresh = () => { source.control().then(setCtl); source.queue().then(setCards); source.recent().then(setRows); };
+    const refresh = () => { source.control().then(setCtl); source.queue().then(setCards); source.recent().then(setRows); setCsat(surveys()); };
     refresh();
     const id = setInterval(refresh, 2000);
     window.addEventListener("storage", refresh);
@@ -123,7 +125,7 @@ export default function Live() {
   return (
     <div className="grid gap-3 lg:grid-cols-[2fr_3fr]">
       <div className="space-y-3"><Controls ctl={ctl} set={update} /><Incoming ctl={ctl} /></div>
-      <div className="space-y-3"><RecentTurns rows={rows} /><Queue cards={cards} /></div>
+      <div className="space-y-3"><RecentTurns rows={rows} csat={csat} /><Queue cards={cards} /></div>
     </div>
   );
 }
