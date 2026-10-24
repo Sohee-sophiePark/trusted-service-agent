@@ -113,7 +113,9 @@ export default function Customer() {
           <span aria-hidden="true" className="grid h-9 w-9 place-items-center rounded-lg bg-c-primary text-lg font-bold text-white">T</span>
           <div><div className="text-lg font-semibold leading-tight tracking-tight">Tessaline</div><div className="text-xs text-c-muted">Help · chat with our assistant</div></div>
         </div>
-        <span className="flex items-center gap-1.5 text-xs text-c-muted"><span aria-hidden="true" className="h-2 w-2 rounded-full bg-good" />Online</span>
+        <span className="flex items-center gap-1.5 rounded-full border border-c-line px-2 py-0.5 text-xs text-c-muted">
+          <span aria-hidden="true" className={`h-2 w-2 rounded-full ${source.live ? "bg-good" : "bg-warn"}`} />{source.live ? "Live" : "Replay (recorded answers)"}
+        </span>
       </header>
       <p role="note" className="mb-3 rounded bg-c-soft px-3 py-1.5 text-xs text-c-muted">Demo: Tessaline is a fictional company; all accounts and policies are made up.</p>
       {overview && ctl && !ctl.kill_switch && (on("ticket_status") || on("account_questions")) && (

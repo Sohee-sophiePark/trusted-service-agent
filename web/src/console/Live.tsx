@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { Light, Panel } from "../components/Status";
 import { QUEUE_LABEL, REASON_LABEL, pct } from "../lib/format";
 import { source, surveys } from "../lib/source";
@@ -49,6 +49,37 @@ function Incoming({ ctl }: { ctl: Control }) {
         <div className="rounded border border-line p-2"><div className="num text-2xl text-agent">{agent}</div><div className="text-xs text-muted">to the agent</div></div>
         <div className="rounded border border-line p-2"><div className="num text-2xl text-control">{n - agent}</div><div className="text-xs text-muted">to human agents</div></div>
       </div>
+    </Panel>
+  );
+}
+
+const SOURCES: [string, string, string][] = [
+  ["Customer records", "Exact lookups after identity check, read-only", "demo: local stand-in for Snowflake (DuckDB)"],
+  ["Policy documents", "The only source for answers, with a citation", "8 approved documents"],
+  ["Call transcripts", "Find top intents and build the test sets. Never an answer source (a test enforces it)", "30 redacted snippets"],
+  ["Case notes", "Context for the human agent", "phase 2 · not connected in the demo"],
+];
+const GUARDS: [string, string][] = [
+  ["Data", "Identity before account data · read-only · customer text treated as data"],
+  ["Routing", "Never-do rules in code, before any model call → a person"],
+  ["Output", "Quote word for word and every number checked, or no answer"],
+];
+
+function Sources() {
+  return (
+    <Panel title="Data sources and guardrails" kicker="what the agent may use, and the checks on every turn">
+      <table className="w-full text-xs">
+        <tbody>
+          {SOURCES.map(([k, role, demo]) => (
+            <tr key={k} className="border-t border-line first:border-t-0 align-top">
+              <td className="py-1.5 pr-2 font-semibold">{k}</td><td className="py-1.5 pr-2">{role}</td><td className="py-1.5 text-muted">{demo}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 border-t border-line pt-2 text-xs">
+        {GUARDS.map(([k, v]) => <Fragment key={k}><dt className="font-semibold text-signal">{k}</dt><dd>{v}</dd></Fragment>)}
+      </dl>
     </Panel>
   );
 }
@@ -125,7 +156,7 @@ export default function Live() {
   return (
     <div className="grid gap-3 lg:grid-cols-[2fr_3fr]">
       <div className="space-y-3"><Controls ctl={ctl} set={update} /><Incoming ctl={ctl} /></div>
-      <div className="space-y-3"><RecentTurns rows={rows} csat={csat} /><Queue cards={cards} /></div>
+      <div className="space-y-3"><RecentTurns rows={rows} csat={csat} /><Queue cards={cards} /><Sources /></div>
     </div>
   );
 }
