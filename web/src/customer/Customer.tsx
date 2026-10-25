@@ -42,6 +42,7 @@ export default function Customer() {
   const [session, setSession] = useState("");
   const [overview, setOverview] = useState<Overview | null>(null);
   const [askId, setAskId] = useState(false);
+  const [pending, setPending] = useState<string | null>(null);
   const [msgs, setMsgs] = useState<Msg[]>([{ who: "agent", text: WELCOME, at: new Date() }]);
   const [ctl, setCtl] = useState<Control | null>(null);
   const [open, setOpen] = useState<string | null>(null);
@@ -64,13 +65,14 @@ export default function Customer() {
   }, []);
   useEffect(() => { end.current?.scrollIntoView({ block: "nearest" }); }, [msgs]);
 
-  async function ask(q: string) {
-    if (!q.trim() || busy) return;
+  async function ask(q: string, echo = true, isVerified = verified) {
+    if (!q.trim() || (busy && echo)) return;
     setBusy(true); setText("");
-    say({ who: "customer", text: q });
+    if (echo) say({ who: "customer", text: q });
     try {
-      const t = await source.chat(session, q, verified);
+      const t = await source.chat(session, q, isVerified);
       setAskId(t.outcome === "identity_requested");
+      setPending(t.outcome === "identity_requested" ? q : null);
       say({ who: "agent", text: t.outcome === "handoff" ? HANDOFF : t.answer ?? "", turn: t });
       if (t.outcome === "handoff") {
         say({ who: "system", text: "Connecting you to our team…" });
@@ -91,7 +93,8 @@ export default function Customer() {
   async function verify() {
     const o = await source.verify(session, acct.account, acct.postal);
     setOverview(o); setAskId(!o);
-    say({ who: "agent", text: o ? "Thank you, you're verified. What would you like to know?" : "Those details don't match our records. Please check and try again." });
+    say({ who: "agent", text: o ? (pending ? "Thank you, you're verified." : "Thank you, you're verified. What would you like to know?") : "Those details don't match our records. Please check and try again." });
+    if (o && pending) await ask(pending, false, true);
   }
 
   const on = (topic: string) => !!ctl && !ctl.kill_switch && ctl.topics[topic];
