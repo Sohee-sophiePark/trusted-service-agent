@@ -85,6 +85,8 @@ make eval                      # release check from recordings, no key
 make dev-api                   # live mode on 127.0.0.1:8018 (needs GEMINI_API_KEY in .env, free tier)
 make dev-web                   # customer chat on :5173, operator console on :5173/console/
 make build-static              # the public replay build in web/dist
+./demo.sh live                 # one command: live API + web app, opens chat and console (Ctrl-C stops both)
+./demo.sh replay               # one command: the replay build, offline on :3018
 ```
 
 ## Release check (evaluation)
